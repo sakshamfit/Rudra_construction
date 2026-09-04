@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Primary Homepage / Landing -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc>
+      <image:title>Rudra Constructions Heavy Civil Engineering &amp; Infrastructure Site</image:title>
+      <image:caption>Civil infrastructure, structural concrete, and certified contracting in India.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Section: Company Overview & Governance -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#overview</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Section: Core Capabilities & Services -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#services</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Section: Landmark Projects & Case Studies -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#projects</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc>
+      <image:title>Panchayat Sarkar Bhawan Administrative Complex</image:title>
+      <image:caption>Two-story civic administrative building constructed in Bihar.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/assets/images/rudra_hospital_ward_1788465423465.jpg</image:loc>
+      <image:title>Modernized Public Hospital Inpatient Ward</image:title>
+      <image:caption>24-bed clinical healthcare ward with anti-bacterial finishes.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/assets/images/rudra_solar_infra_1788465391292.jpg</image:loc>
+      <image:title>Solar Street Lighting &amp; Rooftop Microgrids</image:title>
+      <image:caption>Solar energy solutions across rural and municipal roads.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Section: 5-Stage Methodology -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#methodology</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Section: Quality, Safety & Statutory Compliance -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#quality</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Section: Geographic Pan-India Worksite Map -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#presence</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Section: Institutional Clients & Government Partners -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#clients</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Section: Interactive Project Estimator & BOQ -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#estimator</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Section: Frequently Asked Questions (FAQ) -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#faq</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Section: Tender RFP Submission & Contact -->
+  <url>
+    <loc>https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/#contact</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+</urlset>

@@ -1,0 +1,32 @@
+# Robots.txt for Rudra Constructions & Suppliers
+# Allow full crawling and indexing for all major search engines
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Specific search engine crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# Canonical Sitemaps
+Sitemap: https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/sitemap.xml
+Sitemap: /sitemap.xml
