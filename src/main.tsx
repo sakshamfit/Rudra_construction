@@ -64,6 +64,23 @@ function Root() {
     };
   }, []);
 
+  // Legacy deep-links (e.g. "#admin") used to open the old in-page admin modal.
+  // Route them to the single, unified admin console at /admin instead so the
+  // panel is identical no matter how it is reached.
+  useEffect(() => {
+    const redirect = () => {
+      try {
+        const h = window.location.hash.toLowerCase();
+        if (h === '#admin' || h.startsWith('#admin/')) {
+          window.location.replace('/admin');
+        }
+      } catch { /* ignore */ }
+    };
+    redirect();
+    window.addEventListener('hashchange', redirect);
+    return () => window.removeEventListener('hashchange', redirect);
+  }, []);
+
   // normalize for matching
   const lower = path.toLowerCase();
   if (lower === '/admin' || lower.startsWith('/admin/')) {

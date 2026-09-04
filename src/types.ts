@@ -99,32 +99,3 @@ export interface FAQItem {
   answer: string;
   category: string;
 }
-
-export interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  category: 'Civil Engineering' | 'Solar Energy' | 'Tender & Compliance' | 'Case Study' | 'Materials';
-  coverImage: string;
-  excerpt: string;
-  content: string;
-  authorName: string;
-  authorRole: string;
-  publishDate: string;
-  readTime: string;
-  tags: string[];
-  status: 'Published' | 'Draft';
-  featured?: boolean;
-}
-
-export interface WebsitePhoto {
-  id: string;
-  title: string;
-  section: 'hero' | 'projects' | 'worksites' | 'blogs' | 'gallery';
-  sectionLabel: string;
-  url: string;
-  caption?: string;
-  altText?: string;
-  associatedId?: string; // e.g. 'hero-main' or 'proj-1'
-  uploadedAt: string;
-}

@@ -5,6 +5,7 @@ import { TrustMetrics } from './components/TrustMetrics';
 import { CompanyOverview } from './components/CompanyOverview';
 import { ServicesSection } from './components/ServicesSection';
 import { ProjectsPortfolio } from './components/ProjectsPortfolio';
+import { IndiaPresenceMap } from './components/IndiaPresenceMap';
 import { QualitySafetyCompliance } from './components/QualitySafetyCompliance';
 import { ProjectEstimator } from './components/ProjectEstimator';
 import { ContactSection } from './components/ContactSection';
@@ -43,13 +44,16 @@ export default function App() {
         {/* 4. Landmark Projects Portfolio */}
         <ProjectsPortfolio />
 
-        {/* 5. Quality, Safety & Statutory Compliance */}
+        {/* 5. Pan-India Presence — Real Geographic Map with all project locations */}
+        <IndiaPresenceMap />
+
+        {/* 6. Quality, Safety & Statutory Compliance */}
         <QualitySafetyCompliance />
 
-        {/* 6. Company Background & Mission */}
+        {/* 7. Company Background & Mission */}
         <CompanyOverview />
 
-        {/* 7. RFP / Tender Procurement & Contact Desk */}
+        {/* 8. RFP / Tender Procurement & Contact Desk */}
         <ContactSection />
       </main>
 
