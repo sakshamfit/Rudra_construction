@@ -147,6 +147,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBrochure, onOpenEstimator 
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="text-[#78716c] hover:text-[#0c0a09] transition-colors">Sitemap</a>
             <span>•</span>
+            <a href="/admin" className="text-[#78716c] hover:text-[#0c0a09] transition-colors">Admin Panel</a>
+            <span>•</span>
             <button onClick={onOpenBrochure} className="text-[#292524] hover:underline flex items-center gap-1 cursor-pointer font-medium">
               <FileText className="w-3.5 h-3.5" />
               <span>Company Brochure (PDF)</span>

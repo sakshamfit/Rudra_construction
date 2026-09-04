@@ -1,8 +1,11 @@
 import React from 'react';
 import { ShieldCheck, CheckCircle2, Lightbulb, HeartHandshake, MapPin, Building, ChevronRight } from 'lucide-react';
 import { COMPANY_INFO, MISSION_VISION } from '../data/companyData';
+import { useCms } from '../cms/CmsProvider';
 
 export const CompanyOverview: React.FC = () => {
+  const { company } = useCms();
+  const turnover = company?.turnover || COMPANY_INFO.totalTurnover;
   return (
     <section id="overview" className="py-20 sm:py-24 bg-[#ffffff] border-b border-[#e0e0e0]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,7 +52,7 @@ export const CompanyOverview: React.FC = () => {
 
               <div className="p-5 rounded-[18px] bg-[#fafafa] border border-[#e7e5e4]">
                 <div className="text-xs uppercase text-[#78716c] font-medium tracking-wide">Audited Delivery</div>
-                <div className="text-base font-semibold text-[#1c1917] mt-1">{COMPANY_INFO.totalTurnover}</div>
+                <div className="text-base font-semibold text-[#1c1917] mt-1">{turnover}</div>
                 <div className="text-sm text-[#78716c] mt-0.5 leading-normal">Certified turnover across public & private bids</div>
               </div>
             </div>

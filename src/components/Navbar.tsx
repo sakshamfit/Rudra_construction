@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, Mail, Menu, X, FileText, ChevronRight, Activity } from 'lucide-react';
+import { Phone, Mail, Menu, X, FileText, ChevronRight, Activity, Lock } from 'lucide-react';
 import { COMPANY_INFO } from '../data/companyData';
 
 interface NavbarProps {
@@ -49,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenEstimator, onOpenBrochure 
           ))}
         </nav>
 
-        {/* Right: Hotline, Prospectus & Estimator CTAs */}
+        {/* Right: Hotline, Admin, Prospectus & Estimator CTAs */}
         <div className="hidden sm:flex items-center gap-3">
           <a
             href={`tel:${COMPANY_INFO.phone}`}
@@ -57,6 +57,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenEstimator, onOpenBrochure 
           >
             <Phone className="w-3 h-3 text-[#16a34a]" />
             <span>{COMPANY_INFO.phoneFormatted}</span>
+          </a>
+
+          <a
+            href="/admin"
+            className="inline-flex items-center gap-1.5 text-[13px] text-[#78716c] hover:text-[#0c0a09] px-3 py-1.5 rounded-full border border-transparent hover:border-[#d6d3d1] transition-all"
+            title="Admin Console"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>Admin</span>
           </a>
 
           <button
@@ -101,6 +110,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenEstimator, onOpenBrochure 
                 {link.name}
               </a>
             ))}
+            <a
+              href="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[15px] text-[#292524] hover:text-[#0c0a09] py-1.5 border-b border-[#e7e5e4] flex items-center gap-2"
+            >
+              <Lock className="w-4 h-4 text-[#78716c]" />
+              <span>Admin Console</span>
+            </a>
             <div className="pt-3 flex flex-col gap-2.5">
               <button
                 onClick={() => {
