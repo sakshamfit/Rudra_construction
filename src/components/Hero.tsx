@@ -39,7 +39,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenEstimator, onOpenBrochure }) =
             Class-A civil engineering, institutional complexes, rooftop solar microgrids, and certified bulk material logistics across 11 states. Audited turnover of <strong className="font-semibold text-[#1c1917]">{COMPANY_INFO.totalTurnover}</strong>.
           </p>
 
-          {/* Action CTAs: Ink Primary Pill (#292524) + Outline Pill + Text Link */}
+          {/* Action CTAs: Primary Pill + Secondary Outline */}
           <div className="pt-3 flex flex-wrap items-center justify-center gap-3.5">
             <a
               href="#contact"
@@ -49,19 +49,19 @@ export const Hero: React.FC<HeroProps> = ({ onOpenEstimator, onOpenBrochure }) =
               <ChevronRight className="w-4 h-4 text-[#a7e5d3]" />
             </a>
 
-            <button
-              onClick={onOpenEstimator}
+            <a
+              href="#portfolio"
               className="apple-btn-active inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-[#f0efed] border border-[#d6d3d1] text-[#292524] text-[15px] font-medium transition-all"
             >
-              <span>CPWD DSR Cost Estimator</span>
-            </button>
+              <span>Explore Projects</span>
+            </a>
 
             <button
               onClick={onOpenBrochure}
-              className="apple-btn-active inline-flex items-center gap-1.5 text-[14px] text-[#292524] hover:text-[#0c0a09] font-medium px-2 py-1 transition-all"
+              className="apple-btn-active inline-flex items-center gap-1.5 text-[14px] text-[#57534e] hover:text-[#0c0a09] font-medium px-2 py-1 transition-all"
             >
               <FileText className="w-4 h-4 text-[#777169]" />
-              <span className="underline underline-offset-4 decoration-[#d6d3d1]">View Official Prospectus</span>
+              <span className="underline underline-offset-4 decoration-[#d6d3d1]">Company Prospectus (PDF)</span>
             </button>
           </div>
         </div>

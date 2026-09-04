@@ -11,16 +11,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenEstimator, onOpenBrochure 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { name: 'Overview', href: '/#overview' },
     { name: 'Services', href: '/#services' },
-    { name: 'Portfolio', href: '/#portfolio' },
-    { name: 'Gallery', href: '/#gallery' },
-    { name: 'Journal', href: '/blog' },
-    { name: 'Quality', href: '/#quality' },
-    { name: 'Presence', href: '/#presence' },
-    { name: 'FAQ', href: '/#faq' },
+    { name: 'Projects', href: '/#portfolio' },
+    { name: 'About', href: '/#overview' },
+    { name: 'Standards', href: '/#quality' },
     { name: 'Contact', href: '/#contact' },
-    { name: 'Admin', href: '/admin' }
   ];
 
   return (

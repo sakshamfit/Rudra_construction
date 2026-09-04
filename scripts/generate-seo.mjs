@@ -13,7 +13,7 @@ const ROOT = path.resolve(__dirname, '..');
 const PUBLIC = path.join(ROOT, 'public');
 const LASTMOD = '2026-09-04';
 const INDEXNOW_KEY = '7c4e9a2b8f1d46c0a93e5b7d2f8a1c6e';
-const ORIGIN = (process.env.APP_URL || process.env.SITE_URL || process.env.VITE_SITE_URL || '').replace(/\/$/, '');
+const ORIGIN = (process.env.APP_URL || process.env.SITE_URL || process.env.VITE_SITE_URL || 'https://rudra-construction-nine.vercel.app').replace(/\/$/, '');
 const abs = (p) => `${ORIGIN || '__SITE_ORIGIN__'}${p}`;
 
 const IMG = {

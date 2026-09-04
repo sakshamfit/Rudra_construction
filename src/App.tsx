@@ -5,17 +5,12 @@ import { TrustMetrics } from './components/TrustMetrics';
 import { CompanyOverview } from './components/CompanyOverview';
 import { ServicesSection } from './components/ServicesSection';
 import { ProjectsPortfolio } from './components/ProjectsPortfolio';
-import { MethodologySection } from './components/MethodologySection';
 import { QualitySafetyCompliance } from './components/QualitySafetyCompliance';
-import { IndiaPresenceMap } from './components/IndiaPresenceMap';
-import { ClientsSection } from './components/ClientsSection';
 import { ProjectEstimator } from './components/ProjectEstimator';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { BrochureModal } from './components/BrochureModal';
 import { SeoRuntime } from './components/SeoRuntime';
-import { GallerySection } from './components/GallerySection';
-import { BlogSection } from './components/BlogSection';
 import { CmsProvider } from './cms/CmsProvider';
 
 export default function App() {
@@ -33,48 +28,28 @@ export default function App() {
       />
 
       <main id="main-content" className="flex-grow relative z-10" itemProp="mainContentOfPage">
-        {/* Hero Section */}
+        {/* 1. Hero Section */}
         <Hero
           onOpenEstimator={() => setIsEstimatorModalOpen(true)}
           onOpenBrochure={() => setIsBrochureOpen(true)}
         />
 
-        {/* Live Trust Metrics Strip */}
+        {/* 2. Key Trust Metrics & Certifications */}
         <TrustMetrics />
 
-        {/* Company Overview, Mission, Vision & Core Values */}
-        <CompanyOverview />
-
-        {/* 6 Core Verticals & Capabilities */}
+        {/* 3. Core Civil, Solar & Material Services */}
         <ServicesSection />
 
-        {/* Landmark Projects & Portfolio */}
+        {/* 4. Landmark Projects Portfolio */}
         <ProjectsPortfolio />
 
-        {/* CMS-managed site gallery */}
-        <GallerySection />
-
-        {/* CMS-managed journal */}
-        <BlogSection />
-
-        {/* 5-Stage Execution Methodology */}
-        <MethodologySection />
-
-        {/* Quality, Safety & Statutory Compliance */}
+        {/* 5. Quality, Safety & Statutory Compliance */}
         <QualitySafetyCompliance />
 
-        {/* Exciting Clients & Government Partners */}
-        <ClientsSection />
+        {/* 6. Company Background & Mission */}
+        <CompanyOverview />
 
-        {/* Real Pan-India Interactive Geographic Map with Work Sites & Security Clearances */}
-        <IndiaPresenceMap />
-
-        {/* In-Page Interactive Project Estimator & BOQ Engine */}
-        <div id="estimator-section">
-          <ProjectEstimator />
-        </div>
-
-        {/* Tender RFP & Contact Section + FAQs */}
+        {/* 7. RFP / Tender Procurement & Contact Desk */}
         <ContactSection />
       </main>
 
@@ -90,7 +65,7 @@ export default function App() {
         onClose={() => setIsBrochureOpen(false)}
       />
 
-      {/* Standalone Estimator Modal */}
+      {/* Standalone Estimator Modal (On Demand Only) */}
       <ProjectEstimator
         isModal={true}
         isOpen={isEstimatorModalOpen}

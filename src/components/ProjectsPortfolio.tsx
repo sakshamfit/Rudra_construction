@@ -29,13 +29,13 @@ export const ProjectsPortfolio: React.FC = () => {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#f0efed] border border-[#e7e5e4] text-[11px] font-mono uppercase tracking-wider text-[#777169]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
-              <span>Landmark Deployments — Admin Editable</span>
+              <span>Landmark Deployments</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-normal text-[#0c0a09] tracking-tight leading-snug">
               Engineered with precision across India.
             </h2>
             <p className="text-base sm:text-lg text-[#57534e] leading-relaxed font-normal">
-              Administrative complexes, hospital wards, rural solar grids, and bulk logistics delivered to exact statutory standards. Manage from Admin → Projects.
+              Administrative complexes, hospital wards, rural solar grids, and bulk logistics delivered to exact statutory standards.
             </p>
           </div>
 
