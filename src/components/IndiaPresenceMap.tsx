@@ -200,8 +200,7 @@ export const IndiaPresenceMap: React.FC = () => {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f5f5f5] border border-[#e7e5e4] text-xs font-medium text-[#292524]">
-            <span className="w-2 h-2 rounded-full bg-[#16a34a]"></span>
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#f5f5f5] border border-[#e7e5e4] text-xs font-medium text-[#292524]">
             <span>Real Geographic Indian Map • 18+ Field Deployments</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-normal text-[#0c0a09] tracking-tight leading-snug">
@@ -354,18 +353,9 @@ export const IndiaPresenceMap: React.FC = () => {
             {/* Active Site Detailed Card */}
             <div className="bg-[#292524] text-white rounded-[24px] p-6 border border-[#3e3835] shadow-sm flex flex-col justify-between h-full">
               <div>
-                <div className="flex items-center justify-between mb-3">
+                <div className="mb-3">
                   <span className="text-[11px] font-semibold text-[#a7e5d3] uppercase tracking-wider">
                     Site Inspector • {activeSite.state}
-                  </span>
-                  <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
-                    activeSite.status === 'Completed'
-                      ? 'bg-[#059669]/20 text-[#34d399] border border-[#059669]/40'
-                      : activeSite.status === 'Under Execution'
-                      ? 'bg-[#f59e0b]/20 text-[#fbbf24] border border-[#f59e0b]/40'
-                      : 'bg-[#a7e5d3]/20 text-[#a7e5d3] border border-[#a7e5d3]/40'
-                  }`}>
-                    {activeSite.status}
                   </span>
                 </div>
 

@@ -27,8 +27,7 @@ export const ProjectsPortfolio: React.FC = () => {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
           <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#f0efed] border border-[#e7e5e4] text-[11px] font-mono uppercase tracking-wider text-[#777169]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
+            <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#f0efed] border border-[#e7e5e4] text-[11px] font-mono uppercase tracking-wider text-[#777169]">
               <span>Landmark Deployments</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-normal text-[#0c0a09] tracking-tight leading-snug">
@@ -78,13 +77,6 @@ export const ProjectsPortfolio: React.FC = () => {
                     decoding="async"
                     referrerPolicy="no-referrer"
                   />
-
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono bg-white/95 text-[#0c0a09] shadow-sm border border-black/5 backdrop-blur-md">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse"></span>
-                      <span>{project.status}</span>
-                    </span>
-                  </div>
 
                   <div className="absolute top-3 right-3 z-10">
                     <span className="px-2.5 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-black/80 text-white backdrop-blur-sm border border-white/10">
