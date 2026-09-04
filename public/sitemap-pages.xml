@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>__SITE_ORIGIN__/about/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/about/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/about/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/about/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/services/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/services/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/services/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/services/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/services/civil-structural/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/services/civil-structural/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/services/civil-structural/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/services/civil-structural/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/services/residential-commercial/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/services/residential-commercial/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/services/residential-commercial/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/services/residential-commercial/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/services/infrastructure-gov/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/services/infrastructure-gov/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/services/infrastructure-gov/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/services/infrastructure-gov/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/services/solar-renewable/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/services/solar-renewable/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/services/solar-renewable/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/services/solar-renewable/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_solar_infra_1788465391292.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/services/healthcare-modular/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/services/healthcare-modular/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/services/healthcare-modular/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/services/healthcare-modular/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hospital_ward_1788465423465.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/services/materials-supply/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/services/materials-supply/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/services/materials-supply/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/services/materials-supply/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/projects/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/projects/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/projects/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/projects/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/projects/proj-1/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/projects/proj-1/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/projects/proj-1/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/projects/proj-1/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/projects/proj-2/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/projects/proj-2/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/projects/proj-2/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/projects/proj-2/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hospital_ward_1788465423465.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/projects/proj-3/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/projects/proj-3/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/projects/proj-3/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/projects/proj-3/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_solar_infra_1788465391292.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/projects/proj-4/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/projects/proj-4/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/projects/proj-4/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/projects/proj-4/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/projects/proj-5/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/projects/proj-5/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/projects/proj-5/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/projects/proj-5/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/projects/proj-6/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/projects/proj-6/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/projects/proj-6/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/projects/proj-6/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/locations/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/locations/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/locations/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/locations/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/locations/hq-registered/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/locations/hq-registered/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/locations/hq-registered/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/locations/hq-registered/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/locations/delhi-ncr/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/locations/delhi-ncr/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/locations/delhi-ncr/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/locations/delhi-ncr/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/locations/patna-branch/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/locations/patna-branch/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/locations/patna-branch/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/locations/patna-branch/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/locations/bettiah-branch/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/locations/bettiah-branch/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/locations/bettiah-branch/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/locations/bettiah-branch/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/locations/assam-bedeti/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/locations/assam-bedeti/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/locations/assam-bedeti/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/locations/assam-bedeti/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/locations/assam-jorhat/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/locations/assam-jorhat/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/locations/assam-jorhat/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/locations/assam-jorhat/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/bihar/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/bihar/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/bihar/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/bihar/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/uttar-pradesh/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/uttar-pradesh/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/uttar-pradesh/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/uttar-pradesh/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/jharkhand/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/jharkhand/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/jharkhand/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/jharkhand/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/odisha/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/odisha/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/odisha/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/odisha/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/assam/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/assam/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/assam/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/assam/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/meghalaya/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/meghalaya/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/meghalaya/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/meghalaya/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/tripura/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/tripura/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/tripura/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/tripura/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/arunachal-pradesh/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/arunachal-pradesh/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/arunachal-pradesh/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/arunachal-pradesh/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/haryana/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/haryana/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/haryana/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/haryana/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/punjab/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/punjab/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/punjab/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/punjab/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/presence/jammu-kashmir/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/presence/jammu-kashmir/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/presence/jammu-kashmir/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/presence/jammu-kashmir/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-ramnagar-hq/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-ramnagar-hq/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-ramnagar-hq/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-ramnagar-hq/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-bettiah-lab/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-bettiah-lab/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-bettiah-lab/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-bettiah-lab/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-patna-bridge/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-patna-bridge/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-patna-bridge/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-patna-bridge/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-muzaffarpur-hospital/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-muzaffarpur-hospital/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-muzaffarpur-hospital/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-muzaffarpur-hospital/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hospital_ward_1788465423465.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-motihari-solar/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-motihari-solar/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-motihari-solar/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-motihari-solar/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_solar_infra_1788465391292.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-delhi-ncr-hub/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-delhi-ncr-hub/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-delhi-ncr-hub/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-delhi-ncr-hub/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-gorakhpur-civic/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-gorakhpur-civic/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-gorakhpur-civic/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-gorakhpur-civic/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-varanasi-solar/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-varanasi-solar/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-varanasi-solar/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-varanasi-solar/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_solar_infra_1788465391292.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-biswanath-assam/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-biswanath-assam/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-biswanath-assam/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-biswanath-assam/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-jorhat-assam/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-jorhat-assam/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-jorhat-assam/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-jorhat-assam/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-guwahati-retaining/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-guwahati-retaining/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-guwahati-retaining/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-guwahati-retaining/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-ranchi-jharkhand/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-ranchi-jharkhand/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-ranchi-jharkhand/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-ranchi-jharkhand/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-dhanbad-jharkhand/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-dhanbad-jharkhand/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-dhanbad-jharkhand/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-dhanbad-jharkhand/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-bhubaneswar-odisha/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-bhubaneswar-odisha/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-bhubaneswar-odisha/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-bhubaneswar-odisha/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-srinagar-jk/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-srinagar-jk/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-srinagar-jk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-srinagar-jk/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_solar_infra_1788465391292.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-raipur-chhattisgarh/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-raipur-chhattisgarh/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-raipur-chhattisgarh/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-raipur-chhattisgarh/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_solar_infra_1788465391292.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-itanagar-arunachal/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-itanagar-arunachal/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-itanagar-arunachal/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-itanagar-arunachal/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/worksites/site-rewa-mp/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/worksites/site-rewa-mp/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/worksites/site-rewa-mp/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/worksites/site-rewa-mp/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_solar_infra_1788465391292.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/clients/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/clients/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/clients/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/clients/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/faq/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/faq/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/faq/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/faq/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/methodology/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/methodology/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/methodology/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/methodology/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/methodology/01/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/methodology/01/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/methodology/01/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/methodology/01/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/methodology/02/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/methodology/02/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/methodology/02/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/methodology/02/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/methodology/03/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/methodology/03/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/methodology/03/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/methodology/03/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/methodology/04/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/methodology/04/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/methodology/04/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/methodology/04/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/methodology/05/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/methodology/05/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/methodology/05/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/methodology/05/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/quality/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/quality/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/quality/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/quality/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/credentials/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/credentials/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/credentials/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/credentials/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/contact/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/contact/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/contact/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/contact/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/estimator/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/estimator/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/estimator/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/estimator/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/directory/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/directory/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/directory/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/directory/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_hero_construction_1788465374495.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/press/</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/press/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/press/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/press/" />
+    <image:image><image:loc>__SITE_ORIGIN__/assets/images/rudra_civic_bhawan_1788465407931.jpg</image:loc><image:title>Rudra Constructions &amp; Suppliers</image:title></image:image>
+  </url>
+  <url>
+    <loc>__SITE_ORIGIN__/sitemap.html</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="__SITE_ORIGIN__/sitemap.html" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="__SITE_ORIGIN__/pt-br/sitemap.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="__SITE_ORIGIN__/sitemap.html" />
+    
+  </url>
+</urlset>

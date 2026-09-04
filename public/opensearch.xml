@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Rudra Constructions</ShortName>
+  <Description>Search Rudra Constructions &amp; Suppliers — Class-A civil, solar and infrastructure contractor</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="16" height="16" type="image/svg+xml">/favicon.svg</Image>
+  <Url type="text/html" method="get" template="/sitemap.html?q={searchTerms}"/>
+  <Url type="application/opensearchdescription+xml" rel="self" template="/opensearch.xml"/>
+  <Language>en</Language>
+  <Language>pt-BR</Language>
+  <AdultContent>false</AdultContent>
+  <Developer>Rudra Constructions &amp; Suppliers Pvt. Ltd.</Developer>
+  <SyndicationRight>open</SyndicationRight>
+  <Tags>construction civil solar infrastructure Bihar contractor</Tags>
+</OpenSearchDescription>

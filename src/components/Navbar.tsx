@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenEstimator, onOpenBrochure 
         </a>
 
         {/* Center: Desktop Navigation links with natural spacing */}
-        <nav className="hidden lg:flex items-center gap-7 xl:gap-8">
+        <nav className="hidden lg:flex items-center gap-7 xl:gap-8" aria-label="Primary" itemScope itemType="https://schema.org/SiteNavigationElement">
           {navLinks.map((link) => (
             <a
               key={link.name}

@@ -1,32 +1,74 @@
-# Robots.txt for Rudra Constructions & Suppliers
-# Allow full crawling and indexing for all major search engines
+# Rudra Constructions & Suppliers — full indexing
+# Deploy region: southamerica-northeast1 (São Paulo, Brazil)
+# Timezone: America/Sao_Paulo
+# Languages: en, pt-BR
 
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /src/
 
-# Specific search engine crawlers
 User-agent: Googlebot
 Allow: /
-
 User-agent: Googlebot-Image
 Allow: /
-
+User-agent: Googlebot-News
+Allow: /
+User-agent: AdsBot-Google
+Allow: /
+User-agent: APIs-Google
+Allow: /
 User-agent: Bingbot
 Allow: /
-
 User-agent: Slurp
 Allow: /
-
 User-agent: DuckDuckBot
 Allow: /
-
 User-agent: Baiduspider
 Allow: /
-
 User-agent: YandexBot
 Allow: /
+User-agent: Applebot
+Allow: /
+User-agent: facebookexternalhit
+Allow: /
+User-agent: Twitterbot
+Allow: /
+User-agent: LinkedInBot
+Allow: /
+User-agent: WhatsApp
+Allow: /
+User-agent: TelegramBot
+Allow: /
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Bytespider
+Allow: /
+User-agent: Amazonbot
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: ia_archiver
+Allow: /
+User-agent: archive.org_bot
+Allow: /
 
-# Canonical Sitemaps
-Sitemap: https://ais-dev-ly6obqict7pychu3ky2pcq-139064038462.asia-southeast1.run.app/sitemap.xml
-Sitemap: /sitemap.xml
+Host: __SITE_ORIGIN__
+
+Sitemap: __SITE_ORIGIN__/sitemap.xml
+Sitemap: __SITE_ORIGIN__/sitemap-pages.xml
+Sitemap: __SITE_ORIGIN__/sitemap-images.xml
+Sitemap: __SITE_ORIGIN__/sitemap-pt-br.xml
+Sitemap: __SITE_ORIGIN__/rss.xml

@@ -1,0 +1,156 @@
+# Rudra Constructions & Suppliers — full facts for AI crawlers
+
+From structural engineering to turnkey commissioning, we deliver certified Class-1 civil construction, hospital wards, solar microgrids, and bulk materials across 11 Indian states.
+
+## Identity
+{
+  "name": "Rudra Constructions & Suppliers",
+  "legalName": "Rudra Constructions & Suppliers Pvt. Ltd.",
+  "foundedYear": 2025,
+  "tagline": "Engineering Trust. Constructing Excellence",
+  "slogan": "Building India's infrastructure with structural integrity & certified craftsmanship",
+  "subSlogan": "From structural engineering to turnkey commissioning, we deliver certified Class-1 civil construction, hospital wards, solar microgrids, and bulk materials across 11 Indian states.",
+  "totalTurnover": "₹14.65 Crore",
+  "cin": "U45200BR2025PTC049182",
+  "gstin": "10AALCR8492K1Z5",
+  "pan": "AALCR8492K",
+  "msmeUdyam": "UDYAM-BR-38-0028491",
+  "contractorEnlistment": "Class-1 (Super Heavy) Civil Contractor • PWD / CPWD Enlisted",
+  "bankSolvency": "₹10.00+ Crore Certified Solvency (State Bank of India)",
+  "address": "Ward No.2, Sikta Belwa, Ramnagar",
+  "district": "West Champaran",
+  "state": "Bihar",
+  "pincode": "845103",
+  "country": "India",
+  "phone": "+91 8099588978",
+  "phoneFormatted": "+91 80995 88978",
+  "email": "rudraconstructionsupplier14@gmail.com",
+  "workingHours": "Monday - Saturday: 8:30 AM - 7:00 PM IST",
+  "lat": 27.1667,
+  "lng": 84.3167
+}
+
+## Services
+### Civil & Structural Construction
+Rudra Constructions provides turnkey civil contracting for institutional, commercial, and governmental structures. From extensive earthwork and piling to heavy RCC frames, structural steel erection, and seismic-resistant engineering, our certified engineers ensure lifelong durability.
+- RCC framed structures & heavy foundation engineering
+- Structural steel fabrication & Pre-Engineered Buildings (PEB)
+- Retaining walls, stormwater culverts & drainage networks
+- High-tensile rebar tying, shuttering & mechanized batching
+- Rigorous adherence to IS 456:2000 and IS 1893 seismic codes
+
+### Residential & Commercial Projects
+We design and build contemporary residential communities and high-utility commercial plazas. Combining architectural finesse with functional space planning, our developments feature energy-efficient envelopes, superior thermal insulation, acoustic comfort, and premium finishes.
+- Multi-story residential towers & gated community layout
+- Corporate office parks & commercial shopping complexes
+- Aesthetic facade engineering (ACP, structural glazing, louvers)
+- Integrated electrical, fire safety, HVAC & MEP installations
+- High-grade flooring, vitrified tiling & durable weather coatings
+
+### Infrastructure & Government Development
+A trusted vendor to the Government of Bihar and national developmental foundations, Rudra executes critical civic assets. We build Panchayat Sarkar Bhawans, block administrative hubs, rural concrete roads, flood-resilient culverts, and public recreation parks.
+- Panchayat Sarkar Bhawan construction with full civic amenities
+- Inter-district rigid concrete pavements & asphalt rural roads
+- Veterinary hospitals & animal husbandry infrastructure
+- Civic administrative blocks, public service counters & plazas
+- Stormwater drainage, rainwater harvesting & flood protection
+
+### Solar & Renewable Energy Solutions
+Our dedicated renewable energy division designs, procures, and installs high-efficiency solar energy systems. From standalone solar street lighting in remote villages to high-capacity rooftop solar arrays for government institutions and industrial sheds, we provide clean, round-the-clock power.
+- Integrated all-in-one & semi-integrated LED solar street lighting
+- Grid-tied (On-Grid) & hybrid rooftop solar PV plants (1kW - 500kW)
+- Solar-powered community drinking water pumps & irrigation units
+- Lithium Ferro Phosphate (LiFePO4) & Gel tubular battery storage
+- Remote IoT monitoring, automated dusk-to-dawn sensors & AMC
+
+### Healthcare, Hospital & Modular Infrastructure
+Rudra Constructions develops sterile, resilient healthcare infrastructure. We deliver hospital ward construction, patient care units, diagnostic facility rooms, prefabricated modular isolation units, medical gas pipeline routing provisions, and anti-bacterial vinyl flooring.
+- Public hospital inpatient general wards & specialized clinics
+- Rapid-deployment modular prefabricated healthcare cabins
+- Medical-grade antimicrobial coatings, epoxy & vinyl flooring
+- Dedicated clean power distribution & continuous backup wiring
+- Sanitary plumbing, medical waste drainage & autoclave rooms
+
+### Certified Building Materials Supply
+As an integrated construction and supply conglomerate, Rudra operates a reliable logistics network for bulk building materials. We supply tested, certified raw materials directly to government contractors, commercial builders, and our internal project sites at bulk-negotiated pricing.
+- TMT Rebars (Fe 500D, Fe 550D) with mill test certificates (MTC)
+- OPC 53, OPC 43 & PPC Cement from top-tier primary manufacturers
+- Graded blue metal aggregates (10mm, 20mm, 40mm) & washed river sand
+- Autoclaved Aerated Concrete (AAC) blocks & fly-ash bricks
+- High-spec solar panels, mono-perc modules, LED fixtures & GI poles
+
+## Projects
+### Panchayat Sarkar Bhawan Administrative Complex
+Constructed standard-format, disaster-resilient Panchayat Sarkar Bhawan comprising public grievance halls, elected representative offices, digital citizen service centers, sanitized washrooms, and solar backup power.
+Client: Panchayati Raj Department (Bihar Govt.)
+Constructed 5,400+ sq.ft reinforced concrete two-story administrative building
+Installed ramp-assisted barrier-free access compliant with accessible India guidelines
+Integrated rooftop solar PV with battery backup for uninterrupted public service delivery
+Equipped with rainwater harvesting and dedicated borewell sanitation facilities
+
+### Public Hospital Inpatient Ward Modernization
+Complete structural renovation and retrofitting of a multi-bed hospital inpatient ward. Features medical-grade anti-static vinyl flooring, acoustic false ceiling with soothing blue LED illumination, ergonomic patient beds, and specialized sanitation zones.
+Client: Building Construction Department (Bihar Govt.)
+Modernized 24-bed hospital ward with individual patient monitor points
+Sanitary plumbing overhaul with automated water conservation fixtures
+High-durability antimicrobial wall finishes preventing nosocomial infections
+Zero-downtime execution in phased schedule adjacent to functioning clinical wings
+
+### Solar Rural Electrification & Street Lighting Mission
+Executed widespread installation of autonomous high-lumen LED solar street light systems across rural villages, community squares, and primary health centers. Provides dusk-to-dawn safety, crime deterrence, and eco-friendly lighting.
+Client: Sehgal Foundation & Aroh Foundation
+Installed 450+ autonomous solar street lighting poles with hot-dip galvanized coating
+Equipped with high-efficiency Mono PERC solar modules and LiFePO4 batteries
+Automated optical sensor technology ensuring 12+ hours uninterrupted twilight lighting
+Community maintenance training delivered to local youth panchayat members
+
+### Regional Highway Overpass & Segmental Infrastructure
+Execution of reinforced concrete substructure and pier columns for critical bypass corridor. Utilizes computerized batching, high-tensile Fe 550D rebar cages, and self-compacting concrete to ensure long-term structural integrity under heavy axle traffic.
+Client: Bihar State Building Construction Corp LTD.
+Deep bored cast-in-situ piling reaching firm bedrock strata
+Cast pier caps utilizing high-strength M45 structural concrete
+Strict continuous non-destructive concrete strength and ultrasonic testing
+Comprehensive traffic management plan minimizing regional commuter disruption
+
+### Fisheries & Animal Resource Technical Facility
+Specialized institutional facility built for veterinary diagnosis, aquatic testing, and storage of animal resource supplies. Includes moisture-resistant wall treatments, dedicated drainage, cold room enclosures, and staff administrative quarters.
+Client: Bihar Animal & Fisheries Resource Dept.
+Constructed cold storage enclosures maintaining controlled 2-8°C parameters
+Acid-resistant laboratory counters with chemical drain line interception
+Dedicated solar water heating systems and backup diesel-solar synchronization
+External concrete hardstanding and perimeter security fencing
+
+### Bulk TMT Steel & Cement Logistics Consignment
+Consolidated procurement and logistics dispatch of over 1,800 Metric Tonnes of primary steel and 45,000 bags of OPC 53 cement for watershed development structures, check dams, and rural housing clusters.
+Client: Gramin Vikas Trust (GVT) & WOTR Projects
+100% batch traceability with original mill test certificates (MTC)
+Strict weighbridge verification and zero transit damage logistics
+Dedicated fleet of 10-wheel heavy commercial vehicles deployed
+Warehouse buffer stock maintained in Patna and Bettiah yards
+
+## Offices
+- Registered Headquarters: Ward No.2, Sikta Belwa, Ramnagar, Ramnagar, West Champaran, Bihar 845103
+- Regional Corporate Hub: S8, Second Floor, Aaditya Mall, near Kotak Mahindra Bank, Indirapuram, Ghaziabad (Delhi NCR), Uttar Pradesh 201014
+- State Branch Office: Sanyukta Bhawan, Road Number Zero, Shivpuri, Patna, Bihar 800023
+- Project Operations Office: Basant Vihar, Hariwatika Chowk, Bettiah, Bettiah, Bihar 845438
+- State Branch Office: Bihmari Jarani, P.O. Bedeti, Dist. Biswanath, Biswanath, Assam 784179
+- Project Operations Office: Royal Garden Building 5E, Opposite Jorhat Railway Station, Jorhat, Assam 785001
+
+## FAQ
+Q: What classes of government tenders and commercial projects does Rudra handle?
+A: Rudra Constructions & Suppliers is qualified for Class-A civil engineering contracts, institutional tenders, and turnkey commercial projects. With an audited turnover exceeding ₹14.65 Crore, we handle single-contract values ranging from ₹25 Lakhs up to ₹15 Crore across civil structures, roads, government civic buildings, hospital retrofits, and renewable solar arrays.
+
+Q: Do you supply building materials as a standalone service or only for your own sites?
+A: We offer both! Through our dedicated materials supply division, we provide bulk supply of Grade 53/43 cement, Fe 550D TMT rebars, graded aggregates, and AAC blocks to external government contractors, private developers, and infrastructure firms, complete with primary mill test certificates (MTC) and weighbridge verification.
+
+Q: What quality assurance and testing protocols are enforced during construction?
+A: We adhere strictly to Bureau of Indian Standards (IS 456, IS 1786, IS 1893). For every concrete casting, we prepare standard test cubes tested at 7 and 28 days in NABL-accredited laboratories. We also conduct on-site slump cone tests, ultrasonic pulse velocity (UPV) tests, and ultrasonic weld flaw inspections for structural steel.
+
+Q: How does your solar and renewable energy division operate?
+A: Our solar division designs and executes MNRE-compliant solar systems. We specialize in off-grid and hybrid rooftop solar power plants for institutional and commercial buildings, as well as integrated high-lumen LED solar street light systems with LiFePO4 battery technology and automated twilight sensors for rural and municipal roads.
+
+Q: Where are your registered and operational branch offices located?
+A: Our Registered Headquarters is located in Ramnagar, West Champaran (Bihar 845103). We operate a Regional Corporate Hub in Ghaziabad (Delhi NCR) at Aaditya Mall, Indirapuram, state offices in Patna (Shivpuri) and Bettiah (Hariwatika Chowk), as well as dual North-East operational hubs in Assam at Biswanath (Bedeti) and Jorhat (Royal Garden Building).
+
+Q: How can government departments or developers request an official quote or RFP response?
+A: You can submit your project parameters directly through our online Project Cost Estimator, email tender documents to rudraconstructionsupplier14@gmail.com, or reach our project director directly at +91 8099588978. Our tender estimation team typically responds within 24–48 business hours with a preliminary BOQ review.

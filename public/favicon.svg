@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Rudra Constructions">
+  <rect width="64" height="64" rx="14" fill="#292524"/>
+  <circle cx="38" cy="22" r="10" fill="#a7e5d3"/>
+  <polygon points="10,50 32,18 54,50" fill="#292524" stroke="#ffffff" stroke-width="2"/>
+  <line x1="18" y1="50" x2="46" y2="50" stroke="#a7e5d3" stroke-width="3" stroke-linecap="round"/>
+  <text x="32" y="44" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="600" fill="#ffffff">RC</text>
+</svg>

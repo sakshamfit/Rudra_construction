@@ -26,7 +26,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenEstimator, onOpenBrochure }) =
         <div className="max-w-4xl mx-auto text-center space-y-5 sm:space-y-6">
           
           {/* Hero Display Headline with Natural Line Spacing and Refined Typography */}
-          <h1 className="text-4xl sm:text-5xl lg:text-[58px] font-normal text-[#0c0a09] tracking-tight leading-[1.18] sm:leading-[1.15]">
+          <h1 className="text-4xl sm:text-5xl lg:text-[58px] font-normal text-[#0c0a09] tracking-tight leading-[1.18] sm:leading-[1.15]" itemProp="headline">
             Building India’s infrastructure with <span className="font-medium text-[#1c1917] underline decoration-[#a7e5d3] decoration-2 underline-offset-8">absolute precision</span>.
           </h1>
 
@@ -70,8 +70,13 @@ export const Hero: React.FC<HeroProps> = ({ onOpenEstimator, onOpenBrochure }) =
             {/* Real Civil Construction Photography */}
             <img
               src={heroImg}
-              alt="Rudra Constructions - Civil Engineering & Infrastructure Precision"
+              alt="Rudra Constructions - Civil Engineering & Infrastructure Precision — Panchayat Sarkar Bhawan and Class-A civil works in Bihar, India"
               className="w-full h-[360px] sm:h-[480px] lg:h-[540px] object-cover object-center"
+              width={1600}
+              height={900}
+              fetchPriority="high"
+              decoding="async"
+              itemProp="image"
               referrerPolicy="no-referrer"
             />
 
