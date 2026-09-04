@@ -10,10 +10,20 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const DATA_DIR = path.join(ROOT, 'data');
+// On serverless platforms (Vercel) the project filesystem is read-only except
+// for /tmp. Use it for the data files and uploads so writes don't fail. The
+// bundled seed cms.json (data/cms.json) is read as the initial state.
+const IS_SERVERLESS = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY);
+const WRITABLE_ROOT = IS_SERVERLESS ? '/tmp/rudra-cms' : ROOT;
+const DATA_DIR = path.join(WRITABLE_ROOT, 'data');
 const CMS_FILE = path.join(DATA_DIR, 'cms.json');
+const SEED_CMS_FILE = path.join(ROOT, 'data', 'cms.json');
 const SESS_FILE = path.join(DATA_DIR, 'sessions.json');
-const UPLOAD_DIR = path.join(ROOT, 'public', 'uploads');
+const UPLOAD_DIR = IS_SERVERLESS ? path.join(WRITABLE_ROOT, 'uploads') : path.join(ROOT, 'public', 'uploads');
+// URL path prefix used to reach uploaded files. In production (server.js) the
+// public/ dir is served statically at /uploads. On Vercel, uploads are served
+// by the same serverless function so it streams /uploads/* back out.
+const UPLOAD_URL_PREFIX = '/uploads';
 const COOKIE = 'rc_admin';
 const MAX_BYTES = 12 * 1024 * 1024;
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
@@ -111,8 +121,20 @@ function migrateCms(raw) {
 function loadCms() {
   ensureDirs();
   if (!fs.existsSync(CMS_FILE)) {
-    const cms = defaultCms();
-    fs.writeFileSync(CMS_FILE, JSON.stringify(cms, null, 2));
+    // Seed from the bundled data/cms.json (contains builtin photos, password
+    // hash, defaults) when present — otherwise start from defaults. This lets
+    // fresh serverless instances boot with the same content the site shipped.
+    let cms;
+    try {
+      if (SEED_CMS_FILE !== CMS_FILE && fs.existsSync(SEED_CMS_FILE)) {
+        cms = migrateCms(JSON.parse(fs.readFileSync(SEED_CMS_FILE, 'utf8')));
+      } else {
+        cms = defaultCms();
+      }
+    } catch {
+      cms = defaultCms();
+    }
+    try { fs.writeFileSync(CMS_FILE, JSON.stringify(cms, null, 2)); } catch {}
     return cms;
   }
   try {
@@ -211,24 +233,31 @@ function clearSessionCookie(res) {
 }
 
 function readBody(req) {
-  if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body) && !Array.isArray(req.body)) {
-    return Promise.resolve(JSON.stringify(req.body));
+  // Serverless platforms (Vercel) pre-parse JSON bodies onto req.body.
+  if (req.body !== undefined && req.body !== null) {
+    if (typeof req.body === 'string') return Promise.resolve(req.body);
+    if (Buffer.isBuffer(req.body)) return Promise.resolve(req.body.toString('utf8'));
+    if (typeof req.body === 'object') return Promise.resolve(JSON.stringify(req.body));
   }
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    let size = 0;
-    req.on('data', (c) => {
-      size += c.length;
-      if (size > MAX_BYTES + 512 * 1024) {
-        reject(new Error('payload too large'));
-        req.destroy();
-        return;
-      }
-      chunks.push(c);
+  // Node-style stream (Express / vite dev middleware).
+  if (typeof req.on === 'function') {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      let size = 0;
+      req.on('data', (c) => {
+        size += c.length;
+        if (size > MAX_BYTES + 512 * 1024) {
+          reject(new Error('payload too large'));
+          if (typeof req.destroy === 'function') req.destroy();
+          return;
+        }
+        chunks.push(c);
+      });
+      req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+      req.on('error', reject);
     });
-    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-    req.on('error', reject);
-  });
+  }
+  return Promise.resolve('');
 }
 
 async function readJson(req) {
@@ -383,9 +412,41 @@ function liveProjects(cms) {
   return (cms.projects || []).filter((p) => !p.deleted);
 }
 
+const UPLOAD_MIME = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+};
+
+function serveUpload(res, url) {
+  // Only allow simple basenames to prevent path traversal.
+  const name = path.basename(url.split('?')[0]);
+  if (!name || name.includes('..')) return false;
+  const abs = path.join(UPLOAD_DIR, name);
+  if (!abs.startsWith(UPLOAD_DIR) || !fs.existsSync(abs) || !fs.statSync(abs).isFile()) return false;
+  const ext = path.extname(name).toLowerCase();
+  res.statusCode = 200;
+  res.setHeader('Content-Type', UPLOAD_MIME[ext] || 'application/octet-stream');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.end(fs.readFileSync(abs));
+  return true;
+}
+
 export function createCmsMiddleware() {
   return async function cmsMiddleware(req, res, next) {
     const url = String(req.url || '').split('?')[0];
+
+    // Serve uploaded images on serverless platforms where there is no static
+    // file server for public/uploads. On the Express server these are handled
+    // by express.static, but serving here too is harmless.
+    if (url.startsWith('/uploads/')) {
+      if (serveUpload(res, url)) return;
+      // Fall back to next/static handler if not found in upload dir.
+      return next();
+    }
+
     if (!url.startsWith('/api/')) return next();
 
     const method = (req.method || 'GET').toUpperCase();
