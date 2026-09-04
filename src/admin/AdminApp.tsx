@@ -320,7 +320,6 @@ export function AdminApp() {
               </button>
             );
           })}
-          <StorageStatusCard info={storeInfo} />
           <div className="mt-3 p-3 rounded-[12px] bg-[#fafafa] border border-[#e7e5e4] text-[11px] text-[#78716c] leading-relaxed">
             <span className="font-semibold text-[#292524]">Live Indian SEO</span>
             <br />
@@ -333,6 +332,7 @@ export function AdminApp() {
         </nav>
 
         <main>
+          <StorageBanner info={storeInfo} />
           {bootError && (
             <div className="mb-6 p-4 rounded-[16px] bg-[#fef2f2] border border-[#fecaca] flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-[#dc2626] flex-shrink-0 mt-0.5" />
@@ -1833,60 +1833,185 @@ function BlogEditor({
 }
 
 /* =========================================================================
-   STORAGE STATUS — where edits are kept & why they (or don't) survive refresh
+   STORAGE BANNER — where edits are kept + one-click cloud connection test
    ========================================================================= */
-function StorageStatusCard({ info }: { info: { mode?: string; host?: string } }) {
-  if (!info.mode) {
-    return (
-      <div className="mt-3 p-3 rounded-[12px] bg-[#fafafa] border border-[#e7e5e4] text-[11px] text-[#78716c] leading-relaxed">
-        <span className="font-semibold text-[#292524]">Saving</span>
-        <br />
-        Checking storage backend…
-      </div>
-    );
-  }
-  if (info.mode === 'blob') {
-    return (
-      <div className="mt-3 p-3 rounded-[12px] bg-[#f0fdf4] border border-[#bbf7d0] text-[11px] text-[#166534] leading-relaxed">
-        <span className="font-semibold flex items-center gap-1">
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          Cloud storage: ON
-        </span>
-        <br />
-        Turnover, stats, photos, blogs & projects are saved to Vercel Blob —
-        they stay for <span className="font-semibold">every visitor</span>, across
-        refreshes, logouts and redeploys.
-      </div>
-    );
-  }
-  if (info.host === 'vercel') {
-    return (
-      <div className="mt-3 p-3 rounded-[12px] bg-[#fffbeb] border border-[#fde68a] text-[11px] text-[#92400e] leading-relaxed">
-        <span className="font-semibold flex items-center gap-1">
-          <AlertCircle className="w-3.5 h-3.5" />
-          Temporary serverless storage
-        </span>
-        <br />
-        Vercel wipes the API&apos;s memory on every cold start, so server-side
-        data is only kept for a few minutes. Your edits are also mirrored in
-        <span className="font-semibold"> this browser</span>, so they stay here
-        after refresh. To keep them for <span className="font-semibold">all visitors
-        permanently</span>: Vercel dashboard → project → <span className="font-semibold">Storage</span> →
-        &ldquo;Add new&rdquo; → <span className="font-semibold">Vercel Blob</span> (one click, free 1&nbsp;GB).
-        Vercel injects <span className="font-mono text-[10px]">BLOB_READ_WRITE_TOKEN</span> automatically —
-        then redeploy.
-      </div>
-    );
-  }
+interface StorageTestResult {
+  mode: string;
+  host: string;
+  tokenConfigured: boolean;
+  healthy: boolean;
+  checks: { name: string; ok: boolean; status?: number; ms?: number; detail?: string; error?: string }[];
+}
+
+function StorageBanner({ info }: { info: { mode?: string; host?: string } }) {
+  const [test, setTest] = useState<StorageTestResult | null>(null);
+  const [testing, setTesting] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
+  const runTest = async () => {
+    setTesting(true);
+    setTest(null);
+    try {
+      const r = await api<StorageTestResult>('/api/admin/storage-test');
+      setTest(r);
+    } catch (e) {
+      setTest({
+        mode: info.mode || 'unknown',
+        host: info.host || 'unknown',
+        tokenConfigured: false,
+        healthy: false,
+        checks: [{ name: 'Admin API reachable', ok: false, error: e instanceof Error ? e.message : 'request failed' }],
+      });
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  if (!info.mode) return null;
+  const blob = info.mode === 'blob';
+  const vercelFile = info.mode === 'file' && info.host === 'vercel';
+  if (dismissed && blob) return null;
+
   return (
-    <div className="mt-3 p-3 rounded-[12px] bg-[#f0fdf4] border border-[#bbf7d0] text-[11px] text-[#166534] leading-relaxed">
-      <span className="font-semibold flex items-center gap-1">
-        <CheckCircle2 className="w-3.5 h-3.5" />
-        File storage: ON
-      </span>
-      <br />
-      Changes are saved to <span className="font-mono text-[10px]">data/cms.json</span> on this
-      server — persistent across restarts.
+    <div className="mb-6">
+      {blob && (
+        <div className={`rounded-[16px] border p-4 sm:p-5 ${test && !test.healthy ? 'border-[#fde68a] bg-[#fffbeb]' : 'border-[#bbf7d0] bg-[#f0fdf4]'}`}>
+          <div className="flex items-start gap-3">
+            {test && !test.healthy
+              ? <AlertCircle className="w-5 h-5 text-[#d97706] flex-shrink-0 mt-0.5" />
+              : <CheckCircle2 className="w-5 h-5 text-[#16a34a] flex-shrink-0 mt-0.5" />}
+            <div className="flex-1">
+              <div className={`text-[14px] font-semibold ${test && !test.healthy ? 'text-[#92400e]' : 'text-[#166534]'}`}>
+                {test && !test.healthy
+                  ? '⚠️ Cloud storage is configured but NOT working — your edits are not safe yet'
+                  : 'Cloud storage: ON — edits are permanent'}
+              </div>
+              <p className={`text-[13px] mt-1 leading-relaxed ${test && !test.healthy ? 'text-[#92400e]' : 'text-[#15803d]'}`}>
+                {test && !test.healthy
+                  ? 'The token is set but the Blob could not be read or written (see the checks below). Your edits currently stick in your browser only. Fix the token in project → Settings → Environment Variables, then redeploy and test again.'
+                  : <>Turnover, stats, photos, blogs &amp; projects are saved to <span className="font-semibold">Vercel Blob</span>.
+                They stay for <span className="font-semibold">every visitor on every device</span> — across refreshes,
+                cold starts and redeploys.</>}
+              </p>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <button
+                onClick={runTest}
+                disabled={testing}
+                className="apple-btn-active inline-flex items-center gap-1.5 text-[12px] font-medium px-3.5 py-1.5 rounded-full bg-white border border-[#bbf7d0] text-[#166534] hover:bg-[#dcfce7] disabled:opacity-50"
+              >
+                {testing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+                {testing ? 'Testing…' : 'Test connection'}
+              </button>
+              <button
+                onClick={() => setDismissed(true)}
+                className="text-[#a8a29e] hover:text-[#0c0a09] p-1"
+                aria-label="Dismiss"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          {test && <TestResults test={test} />}
+        </div>
+      )}
+
+      {vercelFile && (
+        <div className="rounded-[16px] border border-[#fde68a] bg-[#fffbeb] p-4 sm:p-5">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-[#d97706] flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <div className="text-[14px] font-semibold text-[#92400e]">
+                ⚠️ Your edits are NOT saved to the cloud yet — they can be lost for other devices
+              </div>
+              <p className="text-[13px] text-[#92400e] mt-1 leading-relaxed">
+                This Vercel deployment does not have the Blob token, so the API&apos;s memory (wiped on every cold
+                start) is the only server storage. Edits currently stick in <span className="font-semibold">your
+                browser only</span>. To make them permanent for <span className="font-semibold">all devices and
+                visitors</span>:
+              </p>
+              <ol className="text-[13px] text-[#92400e] mt-2 space-y-1 list-decimal list-inside leading-relaxed">
+                <li>
+                  Vercel dashboard → <span className="font-semibold">your website project</span> →{' '}
+                  <span className="font-semibold">Settings</span> → <span className="font-semibold">Environment Variables</span>
+                </li>
+                <li>
+                  If <span className="font-mono text-[11px] bg-[#fef3c7] px-1 rounded">BLOB_READ_WRITE_TOKEN</span> is
+                  missing → add it with the token from your Blob page (starts with{' '}
+                  <span className="font-mono text-[11px]">vercel_blob_rw_</span>) for{' '}
+                  <span className="font-semibold">Production</span> and <span className="font-semibold">Preview</span>
+                </li>
+                <li>Vercel redeploys automatically → refresh this page → this banner turns green</li>
+              </ol>
+              <div className="mt-3">
+                <button
+                  onClick={runTest}
+                  disabled={testing}
+                  className="apple-btn-active inline-flex items-center gap-1.5 text-[12px] font-medium px-3.5 py-1.5 rounded-full bg-[#292524] text-white hover:bg-[#0c0a09] disabled:opacity-50"
+                >
+                  {testing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+                  {testing ? 'Testing…' : 'Test connection now'}
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={() => setDismissed(true)}
+              className="text-[#a8a29e] hover:text-[#0c0a09] p-1"
+              aria-label="Dismiss"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          {test && <TestResults test={test} />}
+        </div>
+      )}
+
+      {!blob && !vercelFile && (
+        <div className="rounded-[16px] border border-[#bbf7d0] bg-[#f0fdf4] p-4">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="w-5 h-5 text-[#16a34a] flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <div className="text-[14px] font-semibold text-[#166534]">File storage: ON</div>
+              <p className="text-[13px] text-[#15803d] mt-1">
+                Changes are saved to <span className="font-mono text-[11px]">data/cms.json</span> on this server —
+                persistent across restarts.
+              </p>
+            </div>
+            <button
+              onClick={() => setDismissed(true)}
+              className="text-[#a8a29e] hover:text-[#0c0a09] p-1"
+              aria-label="Dismiss"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TestResults({ test }: { test: StorageTestResult }) {
+  return (
+    <div className={`mt-3 rounded-[12px] border p-3 ${test.healthy ? 'border-[#bbf7d0] bg-white' : 'border-[#fecaca] bg-white'}`}>
+      <div className={`text-[13px] font-semibold ${test.healthy ? 'text-[#166534]' : 'text-[#b91c1c]'}`}>
+        {test.healthy
+          ? '✅ Connection verified — cloud storage is reading AND writing successfully.'
+          : test.tokenConfigured
+            ? '❌ Token is set, but the Blob is not reachable — see the checks below.'
+            : '❌ BLOB_READ_WRITE_TOKEN is not set on this deployment — add it: project → Settings → Environment Variables.'}
+      </div>
+      <ul className="mt-2 space-y-1">
+        {test.checks.map((c, i) => (
+          <li key={i} className="flex items-center gap-2 text-[12px] text-[#57534e]">
+            {c.ok ? <CheckCircle2 className="w-3.5 h-3.5 text-[#16a34a] flex-shrink-0" /> : <X className="w-3.5 h-3.5 text-[#dc2626] flex-shrink-0" />}
+            <span className="font-medium">{c.name}</span>
+            <span className="text-[#a8a29e]">
+              {c.ok ? `${c.detail || 'ok'}${c.ms != null ? ` · ${c.ms}ms` : ''}` : c.error || (c.status ? `HTTP ${c.status}` : 'failed')}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

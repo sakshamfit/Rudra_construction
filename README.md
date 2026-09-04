@@ -39,14 +39,25 @@ footer, brochure and SEO meta.
    project's environment variables — no code or `vercel.json` changes needed.
 4. Redeploy (or push an empty commit).
 
-**Verify:** open `/admin` → the sidebar card turns green and says
-*"Cloud storage: ON"*. Edit the turnover → save → open the homepage in a
-**private/incognito window** (a completely fresh browser) → the new turnover
-is there. That proves it is stored in the blob, not just in your browser.
+**Verify:** open `/admin` → the top banner turns green and says
+*"Cloud storage: ON — edits are permanent"*. Edit the turnover → save → open
+the homepage in a **private/incognito window** (or on your phone) → the new
+turnover is there. That proves it is stored in the blob, not just in your
+browser.
 
-If the sidebar card is amber ("Temporary serverless storage"), the Blob is
-not connected yet — edits still stick in your own browser via the mirror, but
-other visitors will see the shipped values until you complete the steps above.
+### Troubleshooting ("data still gone on a new device")
+
+Open `/admin` and read the banner:
+
+| Banner | Meaning | Fix |
+| --- | --- | --- |
+| 🟡 "NOT saved to the cloud yet" | The deployment has no `BLOB_READ_WRITE_TOKEN` | Create the Blob **from inside the website project** (project → Storage tab), or copy the token to project → Settings → Environment Variables (Production + Preview). Vercel redeploys automatically. |
+| 🟡 + "Test connection now" → ❌ token not set | Same as above | Same as above. |
+| 🟡 + test → ❌ "fetch failed" | Token is set but the Blob is unreachable | Check the token is complete (starts with `vercel_blob_rw_`), and that the Blob belongs to this project. |
+| 🟢 "Cloud storage: ON" + test ✅ | Durable for everyone | Done — edits now survive refreshes, cold starts and redeploys on every device. |
+
+Note: if `/admin` shows **no storage banner at all**, the domain is serving an
+older deployment — promote/redeploy the latest one from the Vercel dashboard.
 
 ### Local development
 

@@ -746,6 +746,48 @@ export function createCmsMiddleware() {
         });
       }
 
+      // STORAGE HEALTH CHECK — one-click proof from the admin panel that
+      // cloud storage is reachable AND writable.
+      if (method === 'GET' && url === '/api/admin/storage-test') {
+        const result = {
+          mode: store.mode,
+          host: HOST_NAME,
+          tokenConfigured: USE_BLOB,
+          checks: [],
+          healthy: false,
+        };
+        if (USE_BLOB) {
+          // 1) can we read the CMS document?
+          try {
+            const t0 = Date.now();
+            const r = await blobFetch('GET', 'cms.json');
+            result.checks.push({
+              name: 'Read CMS document from Blob',
+              ok: r.ok || r.status === 404,
+              status: r.status,
+              ms: Date.now() - t0,
+              detail: r.ok ? 'found' : r.status === 404 ? 'empty yet — will be seeded on your next save' : `HTTP ${r.status}`,
+            });
+          } catch (e) {
+            result.checks.push({ name: 'Read CMS document from Blob', ok: false, error: e.message || String(e) });
+          }
+          // 2) can we write, read back and delete a test key?
+          try {
+            const t0 = Date.now();
+            const wr = await blobFetch('POST', '_healthcheck', { body: 'ok', contentType: 'text/plain', write: true });
+            if (!wr.ok) throw new Error(`write HTTP ${wr.status}`);
+            const gr = await blobFetch('GET', '_healthcheck');
+            const ok = gr.ok && (await gr.text()) === 'ok';
+            await blobFetch('DELETE', '_healthcheck', { write: true });
+            result.checks.push({ name: 'Write → read → delete test key', ok, ms: Date.now() - t0 });
+          } catch (e) {
+            result.checks.push({ name: 'Write → read → delete test key', ok: false, error: e.message || String(e) });
+          }
+        }
+        result.healthy = USE_BLOB && result.checks.length === 2 && result.checks.every((c) => c.ok);
+        return send(res, 200, result);
+      }
+
       if (method === 'PUT' && url === '/api/admin/company') {
         const body = await readJson(req);
         const incoming = body.company || body;
