@@ -2,5 +2,7 @@
   "name": "Rudra Constructions & Suppliers",
   "description": "Official website for Rudra Constructions & Suppliers — Government-approved Class-A civil engineering, Panchayat Sarkar Bhawans, hospital ward retrofits, rooftop solar microgrids, and certified bulk material logistics across India.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

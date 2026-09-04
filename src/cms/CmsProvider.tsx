@@ -4,20 +4,20 @@ import { PROJECTS as DEFAULT_PROJECTS } from '../data/companyData';
 import { COMPANY_INFO as DEFAULT_COMPANY } from '../data/companyData';
 
 function defaultCompany(): CompanySettings {
+  const firstStat = (DEFAULT_COMPANY.stats[0] as any) || {};
   return {
     name: DEFAULT_COMPANY.name,
     legalName: DEFAULT_COMPANY.legalName,
     turnover: DEFAULT_COMPANY.totalTurnover,
-    turnoverShort: DEFAULT_COMPANY.stats[0]?.value || '₹14.65 Cr+',
-    turnoverDetail: DEFAULT_COMPANY.stats[0]?.detail || 'Civil & Solar Works',
-    turnoverTag: DEFAULT_COMPANY.stats[0]?.tag || 'FY 2024-25',
-    stats: DEFAULT_COMPANY.stats.map(s => ({
+    turnoverShort: firstStat.value || '₹14.65 Cr+',
+    turnoverDetail: firstStat.detail || firstStat.change || 'Civil & Solar Works',
+    turnoverTag: firstStat.tag || 'FY 2024-25',
+    stats: DEFAULT_COMPANY.stats.map((s) => ({
       label: s.label,
       value: s.value,
-      detail: s.change ? '' : s.label,
-      // mapping: original stats had change field, we map to detail/tag
-      ...('detail' in s ? {} : {}),
-    })) as any || [],
+      detail: (s as any).detail || (s as any).change || '',
+      tag: (s as any).tag || '',
+    })),
   };
 }
 

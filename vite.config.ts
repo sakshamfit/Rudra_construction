@@ -25,7 +25,7 @@ function injectOriginPlugin(): Plugin {
   const rewrite = (body: string, origin: string) => body.replaceAll('__SITE_ORIGIN__', origin);
 
   const attach = (server: {middlewares: {use: Function}}) => {
-    server.middlewares.use((req: {url?: string; headers: Record<string, unknown>; socket?: {encrypted?: boolean}}, res: {end: Function; setHeader: Function; setHeader?: any; getHeader?: any}, next: Function) => {
+    server.middlewares.use((req: {url?: string; headers: Record<string, unknown>; socket?: {encrypted?: boolean}}, res: {end: Function; setHeader: (k: string, v: any) => void; getHeader?: any}, next: Function) => {
       for (const [key, value] of Object.entries(indiaHeaders)) {
         (res as any).setHeader(key, value);
       }
