@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-04T10:20:41.900Z",
+  "generatedAt": "2026-09-04T12:19:12.056Z",
   "timezone": "Asia/Kolkata",
   "region": "asia-south1",
   "country": "IN",
@@ -9,7 +9,7 @@
     "en"
   ],
   "seo": "Indian SEO",
-  "urlCount": 69,
+  "urlCount": 68,
   "indexnowKey": "7c4e9a2b8f1d46c0a93e5b7d2f8a1c6e",
   "urls": [
     "/about/",
@@ -79,7 +79,6 @@
     "/estimator/",
     "/directory/",
     "/press/",
-    "/admin/",
     "/sitemap.html"
   ],
   "admin": "/admin — turnover & estimation editable — SPA fallback fixed"

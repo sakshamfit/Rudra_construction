@@ -13,7 +13,7 @@ const ROOT = path.resolve(__dirname, '..');
 const PUBLIC = path.join(ROOT, 'public');
 const LASTMOD = '2026-09-04';
 const INDEXNOW_KEY = '7c4e9a2b8f1d46c0a93e5b7d2f8a1c6e';
-const ORIGIN = (process.env.APP_URL || process.env.SITE_URL || process.env.VITE_SITE_URL || 'https://rudra-construction-nine.vercel.app').replace(/\/$/, '');
+const ORIGIN = (process.env.APP_URL || process.env.SITE_URL || process.env.VITE_SITE_URL || '').replace(/\/$/, '');
 const abs = (p) => `${ORIGIN || '__SITE_ORIGIN__'}${p}`;
 
 const IMG = {
@@ -615,6 +615,7 @@ function layout({ langKey, pathEn, title, description, keywords, h1, crumbs, ima
       var origin = location.origin;
       function abs(u) {
         if (!u) return origin + '/';
+        u = String(u).replace(/^__SITE_ORIGIN__/, '');
         if (/^https?:/i.test(u)) return u;
         return origin + (u.charAt(0) === '/' ? u : '/' + u);
       }
@@ -625,7 +626,7 @@ function layout({ langKey, pathEn, title, description, keywords, h1, crumbs, ima
         if (href && href.charAt(0) === '/') l.href = abs(href);
       });
       document.querySelectorAll('meta[property="og:url"], meta[property="og:image"], meta[name="twitter:image"]').forEach(function (m) {
-        var c = m.getAttribute('content');
+        var c = (m.getAttribute('content') || '').replace(/^__SITE_ORIGIN__/, '');
         if (c && c.charAt(0) === '/') m.setAttribute('content', abs(c));
       });
     })();

@@ -6,11 +6,11 @@
   "scripts": {
     "generate:seo": "node scripts/generate-seo.mjs",
     "predev": "node scripts/generate-seo.mjs",
-    "dev": "TZ=America/Sao_Paulo vite --port=3000 --host=0.0.0.0",
+    "dev": "TZ=Asia/Kolkata vite --port=3000 --host=0.0.0.0",
     "prebuild": "node scripts/generate-seo.mjs",
     "build": "vite build",
-    "preview": "TZ=America/Sao_Paulo vite preview --port=3000 --host=0.0.0.0",
-    "start": "TZ=America/Sao_Paulo node server.js",
+    "preview": "TZ=Asia/Kolkata vite preview --port=3000 --host=0.0.0.0",
+    "start": "TZ=Asia/Kolkata node server.js",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"
   },
