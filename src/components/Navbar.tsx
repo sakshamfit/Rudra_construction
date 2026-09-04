@@ -19,7 +19,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenEstimator, onOpenBrochure 
     { name: 'Quality', href: '/#quality' },
     { name: 'Presence', href: '/#presence' },
     { name: 'FAQ', href: '/#faq' },
-    { name: 'Contact', href: '/#contact' }
+    { name: 'Contact', href: '/#contact' },
+    { name: 'Admin', href: '/admin' }
   ];
 
   return (

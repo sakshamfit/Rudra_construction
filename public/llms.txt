@@ -1,4 +1,4 @@
-# Rudra Constructions & Suppliers
+# Rudra Constructions & Suppliers — Indian SEO
 
 > Engineering Trust. Constructing Excellence
 
@@ -6,7 +6,7 @@ From structural engineering to turnkey commissioning, we deliver certified Class
 
 - Legal name: Rudra Constructions & Suppliers Pvt. Ltd.
 - Founded: 2025
-- Turnover: ₹14.65 Crore
+- Turnover: ₹14.65 Crore (Editable via Admin Panel at /admin)
 - CIN: U45200BR2025PTC049182
 - GSTIN: 10AALCR8492K1Z5
 - PAN: AALCR8492K
@@ -14,22 +14,36 @@ From structural engineering to turnkey commissioning, we deliver certified Class
 - Enlistment: Class-1 (Super Heavy) Civil Contractor • PWD / CPWD Enlisted
 - Phone: +91 8099588978
 - Email: rudraconstructionsupplier14@gmail.com
-- HQ: Ward No.2, Sikta Belwa, Ramnagar, West Champaran, Bihar 845103, India
+- HQ: Ward No.2, Sikta Belwa, Ramnagar, West Champaran, Bihar 845103, India India
+- Timezone: Asia/Kolkata
+- Region: asia-south1 India
+- Languages: en-IN, hi-IN
 
-## Index
-- [Home](/)
-- [Português (Brasil)](/pt-br/)
-- [About](/about/)
-- [Services](/services/)
-- [Projects](/projects/)
-- [Locations](/locations/)
-- [Presence](/presence/)
-- [Worksites](/worksites/)
-- [Clients](/clients/)
-- [FAQ](/faq/)
-- [Methodology](/methodology/)
-- [Quality](/quality/)
-- [Credentials](/credentials/)
-- [Contact](/contact/)
-- [Citation kit](/directory/)
-- [Sitemap](/sitemap.html)
+## Indian SEO Keywords
+Rudra Constructions Bihar, civil contractor Bihar, Class-1 contractor Bihar, PWD contractor Bihar, CPWD contractor India, Panchayat Sarkar Bhawan builder Bihar, hospital ward contractor Bihar, solar rooftop EPC Bihar, solar street light contractor Bihar, building material supplier West Champaran, Patna civil construction company, Fe 550D TMT supplier Bihar, Grade 53 cement supplier Bihar, government civil contractor Bihar, West Champaran contractor, Ramnagar contractor, turnkey infrastructure contractor India
+
+## Index — India
+- [Home](/) — Class-A Civil Contractor Bihar
+- [About](/about/) — Turnover ₹14.65 Crore
+- [Services](/services/) — 6 verticals Bihar India
+- [Projects](/projects/) — Portfolio Bihar (Admin editable)
+- [Locations](/locations/) — Ramnagar, Patna, Bettiah, Ghaziabad, Assam
+- [Presence](/presence/) — 11 states Pan-India
+- [Worksites](/worksites/) — 18 geocoded sites
+- [Clients](/clients/) — Govt partners Bihar
+- [FAQ](/faq/) — Indian SEO
+- [Methodology](/methodology/) — 5-stage
+- [Quality](/quality/) — IS 456, NABL
+- [Credentials](/credentials/) — PWD CPWD ISO
+- [Contact](/contact/) — Tender RFP Bihar +91 8099588978
+- [Estimator](/estimator/) — CPWD DSR rates editable via /admin
+- [Admin](/admin) — Edit Turnover, Projects, Estimation Rates
+- [Citation kit](/directory/) — NAP Bihar India
+- [Sitemap](/sitemap.html) — Indian SEO sitemap
+
+## Admin Features — Fixed
+- Admin at /admin now renders (SPA fallback fixed)
+- Turnover editable: Admin → Turnover & Company → change ₹14.65 Crore to any value live
+- Project estimation rates editable: Admin → Estimation Rates → per vertical per grade
+- Projects CRUD: Admin → Projects → add/edit/delete
+- Photos, Blogs, Placements, Settings also available
