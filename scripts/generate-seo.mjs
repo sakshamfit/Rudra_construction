@@ -1351,22 +1351,11 @@ Turnover: ${COMPANY.totalTurnover} (Editable via /admin)` )}</pre>
     ).join('')}</div>`,
   });
 
-  // Admin landing for SEO (but disallowed in robots)
-  emitPage({
-    langKey,
-    pathEn: '/admin/',
-    title: 'Admin Console — Turnover & Estimation — Rudra Constructions India',
-    description: 'Admin console to edit turnover (14 Crore etc), project estimation rates, projects, photos, blogs — Indian SEO. Access at /admin',
-    keywords: keywordsBase(),
-    h1: 'Admin Console — Edit Turnover, Projects, Estimation — Indian SEO',
-    crumbs: [
-      { name: COPY.en.home, href: '/' },
-      { name: 'Admin', href: '/admin/' },
-    ],
-    image: IMG.hero,
-    priority: '0.3',
-    body: `<article class="prose"><p>Admin panel is at <a href="/admin">/admin</a> — fixed SPA fallback. Manage turnover (₹14.65 Crore etc), project estimation rates, projects CRUD, photos, blogs, placements. Indian SEO active: Asia/Kolkata timezone, asia-south1 region, en-IN hi-IN languages.</p><p>Default password: RudraAdmin@2025 — change in Settings.</p><div class="actions"><a class="cta" href="/admin">Open Admin Panel</a></div></article>`,
-  });
+  // NOTE: No static /admin/ page is emitted. The admin console is a client-side
+  // React SPA served from index.html at /admin (handled by the SPA fallback in
+  // server.js, vite.config.ts and vercel.json). Generating public/admin/index.html
+  // shadows the SPA on trailing-slash requests (/admin/) — which serve the static
+  // SEO stub instead of the real login console. /admin/ is also robots-disallowed.
 
   // HTML sitemap
   const htmlMap = layout({

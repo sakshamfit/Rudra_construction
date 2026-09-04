@@ -70,6 +70,7 @@ function cacheUrl(photo?: CmsPhoto | null) {
 export function AdminApp() {
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
+  const [bootError, setBootError] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -109,9 +110,12 @@ export function AdminApp() {
         company: (data as any).company || cms.company,
         estimator: (data as any).estimator || cms.estimator,
       });
+      setBootError('');
+      return true;
     } catch (e) {
       console.error(e);
-      throw e;
+      setBootError(e instanceof Error ? e.message : 'Could not load admin data.');
+      return false;
     }
   }, []);
 
@@ -122,6 +126,8 @@ export function AdminApp() {
         setAuthed(!!me.authenticated);
         if (me.authenticated) await load();
       } catch {
+        // Auth probe failed (e.g. backend unreachable) — show the login screen;
+        // the sign-in attempt will surface the real error.
         setAuthed(false);
       } finally {
         setReady(true);
@@ -137,7 +143,8 @@ export function AdminApp() {
       await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ password }) });
       setPassword('');
       setAuthed(true);
-      await load();
+      const ok = await load();
+      if (!ok) setAuthed(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not sign in.');
     } finally {
@@ -316,6 +323,25 @@ export function AdminApp() {
         </nav>
 
         <main>
+          {bootError && (
+            <div className="mb-6 p-4 rounded-[16px] bg-[#fef2f2] border border-[#fecaca] flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-[#dc2626] flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <div className="text-sm font-medium text-[#b91c1c]">Couldn't load live site data</div>
+                <p className="text-xs text-[#7f1d1d] mt-1">
+                  The admin API returned an error: {bootError}. Photo uploads and edits won't save until this is
+                  resolved. If this persists, the backend API may be unavailable on this environment.
+                </p>
+                <button
+                  onClick={load}
+                  className="apple-btn-active mt-2 inline-flex items-center gap-1.5 text-[12px] px-3 py-1.5 rounded-full bg-[#292524] text-white font-medium"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
           {tab === 'placements' && <PlacementsPanel cms={cms} onChange={load} />}
           {tab === 'photos' && <PhotosPanel cms={cms} onChange={load} />}
           {tab === 'projects' && <ProjectsPanel cms={cms} onChange={load} />}

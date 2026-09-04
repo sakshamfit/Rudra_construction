@@ -31,9 +31,15 @@ function injectOriginPlugin(): Plugin {
       }
       const url = (req.url || '').split('?')[0];
       if (url.startsWith('/api/')) return next();
-      // SPA fallback for admin and blog
-      if (url === '/admin' || url.startsWith('/admin/') || url === '/blog' || url.startsWith('/blog/')) {
-        // let vite handle index.html fallback later, but ensure headers set
+      // SPA routes (/admin, /blog): mark admin noindex, then defer to Vite's
+      // transform + SPA fallback. No static public/admin/index.html exists, so
+      // sirv falls through to index.html, which renders the React console.
+      if (url === '/admin' || url.startsWith('/admin/')) {
+        (res as any).setHeader('X-Robots-Tag', 'noindex, nofollow');
+        (res as any).setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        return next();
+      }
+      if (url === '/blog' || url.startsWith('/blog/')) {
         return next();
       }
       const injectExt = ['.xml', '.txt', '.json', '.html', '.webmanifest'];

@@ -45,13 +45,16 @@ function injectOrigin(html, origin) {
 }
 
 // Early SPA handler for /admin and /blog — must be BEFORE static to avoid 301 redirect
-app.get(['/admin', '/admin/', '/admin/*', '/blog', '/blog/*'], (req, res, next) => {
-  // admin SPA: always serve index.html
+// or a static index.html stub shadowing the real React console.
+app.get(['/admin', '/admin/', '/admin/*', '/blog', '/blog/', '/blog/*'], (req, res, next) => {
+  // admin SPA: always serve the real index.html (never a static SEO stub)
   if (req.path === '/admin' || req.path === '/admin/' || req.path.startsWith('/admin/')) {
     const index = path.join(DIST, 'index.html');
     if (fs.existsSync(index)) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      // Admin console must not be indexed; it requires authentication.
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
       return res.send(injectOrigin(fs.readFileSync(index, 'utf8'), res.locals.origin));
     }
   }
