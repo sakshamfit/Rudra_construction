@@ -19,9 +19,10 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenEstimator, onOpenBrochure }) => {
-  const { resolveSlotUrl, slotPhoto } = useCms();
+  const { resolveSlotUrl, slotPhoto, company } = useCms();
   const heroSrc = resolveSlotUrl('hero', heroImg);
   const heroMeta = slotPhoto('hero');
+  const turnover = company?.turnover || COMPANY_INFO.totalTurnover;
   return (
     <section className="relative overflow-hidden bg-[#f5f5f5] text-[#0c0a09] pt-12 pb-20 sm:pt-16 sm:pb-28 border-b border-[#e7e5e4]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -36,7 +37,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenEstimator, onOpenBrochure }) =
 
           {/* Lead Subtitle with Clean Line Spacing & Balanced Tracking */}
           <p className="text-base sm:text-lg lg:text-[19px] text-[#57534e] leading-relaxed max-w-3xl mx-auto font-normal">
-            Class-A civil engineering, institutional complexes, rooftop solar microgrids, and certified bulk material logistics across 11 states. Audited turnover of <strong className="font-semibold text-[#1c1917]">{COMPANY_INFO.totalTurnover}</strong>.
+            Class-A civil engineering, institutional complexes, rooftop solar microgrids, and certified bulk material logistics across 11 states. Audited turnover of <strong className="font-semibold text-[#1c1917]">{turnover}</strong>.
           </p>
 
           {/* Action CTAs: Primary Pill + Secondary Outline */}

@@ -12,7 +12,8 @@
     "preview": "TZ=Asia/Kolkata vite preview --port=3000 --host=0.0.0.0",
     "start": "TZ=Asia/Kolkata node server.js",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test:storage": "node test/blob-mode.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

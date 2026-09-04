@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import type { CmsBlog, CmsPayload, CmsPhoto, CmsProject, CompanySettings, EstimatorSettings } from '../cms/types';
 import { fileToDataUrl } from '../cms/fileToDataUrl';
+import { mergeLocalOverlay, toLocalPayload, writeLocalState } from '../cms/localState';
 import { PROJECTS as DEFAULT_PROJECTS } from '../data/companyData';
 import heroImg from '../assets/images/rudra_hero_construction_1788465374495.jpg';
 
@@ -76,6 +77,7 @@ export function AdminApp() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<'placements' | 'photos' | 'projects' | 'blogs' | 'company' | 'estimator' | 'settings'>('placements');
+  const [storeInfo, setStoreInfo] = useState<{ mode?: string; host?: string }>({});
   const [cms, setCms] = useState<CmsPayload>({
     photos: [],
     blogs: [],
@@ -102,14 +104,21 @@ export function AdminApp() {
   const load = useCallback(async () => {
     try {
       const data = await api<CmsPayload>('/api/admin/cms');
+      // Merge with the browser mirror: on stateless hosts (Vercel serverless
+      // without a Blob) a cold-started API would serve seed data and your
+      // edits would look like they vanished after a refresh. Newer wins.
+      const { payload: merged } = mergeLocalOverlay(data);
       setCms({
-        photos: data.photos || [],
-        blogs: data.blogs || [],
-        slots: data.slots || {},
-        projects: (data as any).projects || [],
-        company: (data as any).company || cms.company,
-        estimator: (data as any).estimator || cms.estimator,
+        photos: merged.photos || [],
+        blogs: merged.blogs || [],
+        slots: merged.slots || {},
+        projects: (merged as any).projects || [],
+        company: (merged as any).company || cms.company,
+        estimator: (merged as any).estimator || cms.estimator,
       });
+      // Mirror committed state so it survives serverless cold starts.
+      writeLocalState(toLocalPayload(merged));
+      if (merged.storage || merged.host) setStoreInfo({ mode: merged.storage, host: merged.host });
       setBootError('');
       return true;
     } catch (e) {
@@ -311,6 +320,7 @@ export function AdminApp() {
               </button>
             );
           })}
+          <StorageStatusCard info={storeInfo} />
           <div className="mt-3 p-3 rounded-[12px] bg-[#fafafa] border border-[#e7e5e4] text-[11px] text-[#78716c] leading-relaxed">
             <span className="font-semibold text-[#292524]">Live Indian SEO</span>
             <br />
@@ -1823,6 +1833,65 @@ function BlogEditor({
 }
 
 /* =========================================================================
+   STORAGE STATUS — where edits are kept & why they (or don't) survive refresh
+   ========================================================================= */
+function StorageStatusCard({ info }: { info: { mode?: string; host?: string } }) {
+  if (!info.mode) {
+    return (
+      <div className="mt-3 p-3 rounded-[12px] bg-[#fafafa] border border-[#e7e5e4] text-[11px] text-[#78716c] leading-relaxed">
+        <span className="font-semibold text-[#292524]">Saving</span>
+        <br />
+        Checking storage backend…
+      </div>
+    );
+  }
+  if (info.mode === 'blob') {
+    return (
+      <div className="mt-3 p-3 rounded-[12px] bg-[#f0fdf4] border border-[#bbf7d0] text-[11px] text-[#166534] leading-relaxed">
+        <span className="font-semibold flex items-center gap-1">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          Cloud storage: ON
+        </span>
+        <br />
+        Turnover, stats, photos, blogs & projects are saved to Vercel Blob —
+        they stay for <span className="font-semibold">every visitor</span>, across
+        refreshes, logouts and redeploys.
+      </div>
+    );
+  }
+  if (info.host === 'vercel') {
+    return (
+      <div className="mt-3 p-3 rounded-[12px] bg-[#fffbeb] border border-[#fde68a] text-[11px] text-[#92400e] leading-relaxed">
+        <span className="font-semibold flex items-center gap-1">
+          <AlertCircle className="w-3.5 h-3.5" />
+          Temporary serverless storage
+        </span>
+        <br />
+        Vercel wipes the API&apos;s memory on every cold start, so server-side
+        data is only kept for a few minutes. Your edits are also mirrored in
+        <span className="font-semibold"> this browser</span>, so they stay here
+        after refresh. To keep them for <span className="font-semibold">all visitors
+        permanently</span>: Vercel dashboard → project → <span className="font-semibold">Storage</span> →
+        &ldquo;Add new&rdquo; → <span className="font-semibold">Vercel Blob</span> (one click, free 1&nbsp;GB).
+        Vercel injects <span className="font-mono text-[10px]">BLOB_READ_WRITE_TOKEN</span> automatically —
+        then redeploy.
+      </div>
+    );
+  }
+  return (
+    <div className="mt-3 p-3 rounded-[12px] bg-[#f0fdf4] border border-[#bbf7d0] text-[11px] text-[#166534] leading-relaxed">
+      <span className="font-semibold flex items-center gap-1">
+        <CheckCircle2 className="w-3.5 h-3.5" />
+        File storage: ON
+      </span>
+      <br />
+      Changes are saved to <span className="font-mono text-[10px]">data/cms.json</span> on this
+      server — persistent across restarts.
+    </div>
+  );
+}
+
+/* =========================================================================
    5. COMPANY PANEL — Turnover & Trust Metrics
    ========================================================================= */
 function CompanyPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promise<void> }) {
@@ -1838,9 +1907,17 @@ function CompanyPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Prom
     setMsg('');
     setErr('');
     try {
-      await api('/api/admin/company', { method: 'PUT', body: JSON.stringify({ company }) });
+      const res = await api<{ save?: { persisted?: boolean; storage?: string } }>('/api/admin/company', {
+        method: 'PUT',
+        body: JSON.stringify({ company }),
+      });
       await onChange();
-      setMsg('Company & turnover updated live. Changes reflect immediately on homepage.');
+      if (res?.save?.persisted === false) {
+        setErr('Cloud storage write failed — your update is kept in this browser but NOT for other visitors. Fix Vercel Blob (see storage card in the sidebar) and save again.');
+        setMsg('Turnover updated in this browser — see warning.');
+      } else {
+        setMsg('Company & turnover updated live. Changes reflect immediately on the main panel and stay after refresh.');
+      }
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Save failed');
     } finally {
@@ -1871,6 +1948,8 @@ function CompanyPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Prom
         </h1>
         <p className="text-sm text-[#57534e] mt-1">
           Update certified turnover figures (e.g. ₹14.65 Crore, ₹20 Crore, etc.) and TrustMetrics strip items.
+          Saved values appear instantly on the main panel (hero, trust strip, company section, footer) and
+          stay there after refresh — see the storage card in the sidebar.
         </p>
       </div>
 
