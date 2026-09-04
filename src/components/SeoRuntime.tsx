@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { COMPANY_INFO, SERVICES, PROJECTS, OFFICE_LOCATIONS, FAQS } from '../data/companyData';
 import { absUrl, getSiteOrigin } from '../seo/site';
+import { useCms } from '../cms/CmsProvider';
 
 function upsertJsonLd(id: string, data: unknown) {
   let el = document.getElementById(id) as HTMLScriptElement | null;
@@ -14,6 +15,8 @@ function upsertJsonLd(id: string, data: unknown) {
 }
 
 export function SeoRuntime() {
+  const { company } = useCms();
+
   useEffect(() => {
     const origin = getSiteOrigin();
     const canonical = document.querySelector('link[rel="canonical"]');
@@ -28,7 +31,10 @@ export function SeoRuntime() {
       }
     });
 
-    document.documentElement.lang = document.documentElement.lang || 'en';
+    document.documentElement.lang = 'en-IN';
+
+    // Update turnover in meta if needed
+    const turnover = company?.turnover || COMPANY_INFO.totalTurnover;
 
     upsertJsonLd('jsonld-runtime', {
       '@context': 'https://schema.org',
@@ -37,9 +43,9 @@ export function SeoRuntime() {
           '@type': 'WebPage',
           '@id': `${origin}/#webpage`,
           url: `${origin}/`,
-          name: `${COMPANY_INFO.name} | Class-A Civil, Solar & Infrastructure Contractor`,
-          description: COMPANY_INFO.subSlogan,
-          inLanguage: ['en', 'pt-BR'],
+          name: `${COMPANY_INFO.name} | Class-A Civil Contractor Bihar | Turnover ${turnover}`,
+          description: `${COMPANY_INFO.subSlogan} Turnover ${turnover} — editable via admin.`,
+          inLanguage: ['en-IN', 'hi-IN'],
           isPartOf: { '@id': `${origin}/#website` },
           about: { '@id': `${origin}/#organization` },
           speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', 'h2'] },
@@ -51,7 +57,7 @@ export function SeoRuntime() {
         },
         {
           '@type': 'ItemList',
-          name: 'Service verticals',
+          name: 'Service verticals India',
           itemListElement: SERVICES.map((s, i) => ({
             '@type': 'ListItem',
             position: i + 1,
@@ -61,7 +67,7 @@ export function SeoRuntime() {
         },
         {
           '@type': 'ItemList',
-          name: 'Landmark projects',
+          name: 'Landmark projects India',
           itemListElement: PROJECTS.map((p, i) => ({
             '@type': 'ListItem',
             position: i + 1,
@@ -71,7 +77,7 @@ export function SeoRuntime() {
         },
         {
           '@type': 'ItemList',
-          name: 'Operating offices',
+          name: 'Operating offices India',
           itemListElement: OFFICE_LOCATIONS.map((o, i) => ({
             '@type': 'ListItem',
             position: i + 1,
@@ -89,7 +95,7 @@ export function SeoRuntime() {
         },
       ],
     });
-  }, []);
+  }, [company]);
 
   return (
     <a href="#main-content" className="skip-to-content">

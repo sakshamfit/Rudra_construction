@@ -1,6 +1,7 @@
 /**
- * CMS API for photos + blogs. Connect/Express compatible middleware.
+ * CMS API for photos + blogs + company + estimator + projects.
  * Persists to data/cms.json and public/uploads/.
+ * Indian SEO ready, admin can edit turnover and project estimation.
  */
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -25,14 +26,86 @@ function ensureDirs() {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
+function defaultCompany() {
+  return {
+    name: 'Rudra Constructions & Suppliers',
+    legalName: 'Rudra Constructions & Suppliers Pvt. Ltd.',
+    turnover: '₹14.65 Crore',
+    turnoverShort: '₹14.65 Cr+',
+    turnoverDetail: 'Civil & Solar Works',
+    turnoverTag: 'FY 2024-25',
+    stats: [
+      { label: 'Audited Turnover', value: '₹14.65 Cr+', detail: 'Civil & Solar Works', tag: 'FY 2024-25' },
+      { label: 'States Served', value: '11 States', detail: 'Pan-India Footprint', tag: '18+ Depots' },
+      { label: 'Infrastructure Projects', value: '35+ Sites', detail: 'Completed & Active', tag: 'Handed Over' },
+      { label: 'Clean Solar Units', value: '1,200+', detail: 'Installed Capacities', tag: 'Microgrids' },
+      { label: 'Field Workforce', value: '250+', detail: 'Engineers & Crews', tag: 'Biometric Verified' },
+      { label: 'Statutory Compliance', value: '100%', detail: 'NABL & IS 456 Standards', tag: 'Zero Deviation' },
+    ],
+  };
+}
+
+function defaultEstimator() {
+  return {
+    civic: { standard: 1650, premium: 1950, high_spec: 2300, unit: 'sq.ft built-up', material: 'RCC M25 concrete, Fe 550D TMT, brick masonry, ramp railings, UPVC fixtures' },
+    healthcare: { standard: 2200, premium: 2750, high_spec: 3400, unit: 'sq.ft ward area', material: 'Antimicrobial vinyl flooring, medical gas lines, acoustic ceiling, ICU electrical' },
+    commercial: { standard: 2000, premium: 2500, high_spec: 3100, unit: 'sq.ft commercial space', material: 'Structural glazing, high-speed lift provisions, firefighting systems, vitrified tiles' },
+    solar: { standard: 18000, premium: 23500, high_spec: 29000, unit: 'autonomous solar poles / kW', material: 'Mono PERC solar panels, LiFePO4 batteries, hot-dip GI octagonal poles, IoT sensors' },
+    materials: { standard: 62000, premium: 62000, high_spec: 62000, unit: 'metric tonnes certified supply', material: 'Primary mill test certificates, weighbridge tickets, direct dispatch' },
+  };
+}
+
 function defaultCms() {
   return {
-    version: 1,
-    settings: { passwordHash: '' },
+    version: 2,
+    settings: {
+      passwordHash: '',
+      company: defaultCompany(),
+      estimator: defaultEstimator(),
+    },
     slots: {},
     photos: [],
     blogs: [],
+    projects: [], // custom projects, each with id, title, category, etc
   };
+}
+
+function migrateCms(raw) {
+  const def = defaultCms();
+  if (!raw) return def;
+  // shallow merge top
+  const cms = {
+    ...def,
+    ...raw,
+    settings: {
+      ...def.settings,
+      ...(raw.settings || {}),
+      company: {
+        ...def.settings.company,
+        ...(raw.settings?.company || {}),
+      },
+      estimator: {
+        ...def.settings.estimator,
+        ...(raw.settings?.estimator || {}),
+        civic: { ...def.settings.estimator.civic, ...(raw.settings?.estimator?.civic || {}) },
+        healthcare: { ...def.settings.estimator.healthcare, ...(raw.settings?.estimator?.healthcare || {}) },
+        commercial: { ...def.settings.estimator.commercial, ...(raw.settings?.estimator?.commercial || {}) },
+        solar: { ...def.settings.estimator.solar, ...(raw.settings?.estimator?.solar || {}) },
+        materials: { ...def.settings.estimator.materials, ...(raw.settings?.estimator?.materials || {}) },
+      },
+    },
+    slots: raw.slots || {},
+    photos: raw.photos || [],
+    blogs: raw.blogs || [],
+    projects: raw.projects || [],
+  };
+  // ensure stats is array
+  if (!Array.isArray(cms.settings.company.stats) || cms.settings.company.stats.length === 0) {
+    cms.settings.company.stats = def.settings.company.stats;
+  }
+  // version bump
+  cms.version = 2;
+  return cms;
 }
 
 function loadCms() {
@@ -43,7 +116,13 @@ function loadCms() {
     return cms;
   }
   try {
-    return { ...defaultCms(), ...JSON.parse(fs.readFileSync(CMS_FILE, 'utf8')) };
+    const raw = JSON.parse(fs.readFileSync(CMS_FILE, 'utf8'));
+    const migrated = migrateCms(raw);
+    // if file was old version, save migrated
+    if ((raw.version || 1) < 2) {
+      try { fs.writeFileSync(CMS_FILE, JSON.stringify(migrated, null, 2)); } catch {}
+    }
+    return migrated;
   } catch {
     return defaultCms();
   }
@@ -238,6 +317,27 @@ function publicBlog(b) {
   };
 }
 
+function publicProject(p) {
+  return {
+    id: p.id,
+    title: p.title,
+    category: p.category,
+    categoryLabel: p.categoryLabel,
+    client: p.client,
+    location: p.location,
+    state: p.state,
+    year: p.year,
+    status: p.status,
+    scope: p.scope,
+    description: p.description,
+    highlights: p.highlights || [],
+    image: p.image || '',
+    metrics: p.metrics || [],
+    createdAt: p.createdAt,
+    updatedAt: p.updatedAt,
+  };
+}
+
 function decodeDataUrl(data) {
   const m = String(data || '').match(/^data:([^;]+);base64,(.+)$/);
   if (m) return { mime: m[1], buf: Buffer.from(m[2], 'base64') };
@@ -272,11 +372,15 @@ function rateLimitLogin(req) {
   }
   rec.n += 1;
   loginHits.set(ip, rec);
-  return rec.n <= 8;
+  return rec.n <= 20;
 }
 
 function livePhotos(cms) {
   return (cms.photos || []).filter((p) => !p.deleted);
+}
+
+function liveProjects(cms) {
+  return (cms.projects || []).filter((p) => !p.deleted);
 }
 
 export function createCmsMiddleware() {
@@ -294,12 +398,34 @@ export function createCmsMiddleware() {
     try {
       let cms = ensurePassword(loadCms());
 
+      // PUBLIC ENDPOINTS
       if (method === 'GET' && url === '/api/public/cms') {
         const photos = livePhotos(cms).filter((p) => p.visible).map(publicPhoto);
         const blogs = (cms.blogs || []).filter((b) => b.published).map(publicBlog);
-        return send(res, 200, { photos, blogs, slots: cms.slots || {} });
+        const projects = liveProjects(cms).map(publicProject);
+        return send(res, 200, {
+          photos,
+          blogs,
+          slots: cms.slots || {},
+          projects,
+          company: cms.settings.company || defaultCompany(),
+          estimator: cms.settings.estimator || defaultEstimator(),
+        });
       }
 
+      if (method === 'GET' && url === '/api/public/company') {
+        return send(res, 200, { company: cms.settings.company || defaultCompany() });
+      }
+
+      if (method === 'GET' && url === '/api/public/estimator') {
+        return send(res, 200, { estimator: cms.settings.estimator || defaultEstimator() });
+      }
+
+      if (method === 'GET' && url === '/api/public/projects') {
+        return send(res, 200, { projects: liveProjects(cms).map(publicProject) });
+      }
+
+      // AUTH
       if (method === 'POST' && url === '/api/auth/login') {
         if (!rateLimitLogin(req)) return send(res, 429, { error: 'Too many attempts. Try again in 15 minutes.' });
         const body = await readJson(req);
@@ -332,6 +458,7 @@ export function createCmsMiddleware() {
 
       if (!requireAdmin(req, res)) return;
 
+      // ADMIN ENDPOINTS
       if (method === 'POST' && url === '/api/auth/password') {
         const body = await readJson(req);
         if (!verifyPassword(body.currentPassword || '', cms.settings.passwordHash)) {
@@ -349,7 +476,61 @@ export function createCmsMiddleware() {
           photos: livePhotos(cms),
           blogs: cms.blogs || [],
           slots: cms.slots || {},
+          projects: liveProjects(cms),
+          company: cms.settings.company || defaultCompany(),
+          estimator: cms.settings.estimator || defaultEstimator(),
         });
+      }
+
+      if (method === 'PUT' && url === '/api/admin/company') {
+        const body = await readJson(req);
+        const incoming = body.company || body;
+        // validate turnover
+        const company = {
+          ...defaultCompany(),
+          ...(cms.settings.company || {}),
+          ...incoming,
+        };
+        // stats handling: if array provided, sanitize
+        if (Array.isArray(incoming.stats)) {
+          company.stats = incoming.stats.slice(0, 12).map((s) => ({
+            label: String(s.label || '').slice(0, 80),
+            value: String(s.value || '').slice(0, 80),
+            detail: String(s.detail || '').slice(0, 120),
+            tag: String(s.tag || '').slice(0, 80),
+          }));
+        }
+        cms.settings.company = company;
+        saveCms(cms);
+        return send(res, 200, { company });
+      }
+
+      if (method === 'PUT' && url === '/api/admin/estimator') {
+        const body = await readJson(req);
+        const incoming = body.estimator || body;
+        const current = cms.settings.estimator || defaultEstimator();
+        const merged = {
+          civic: { ...current.civic, ...(incoming.civic || {}) },
+          healthcare: { ...current.healthcare, ...(incoming.healthcare || {}) },
+          commercial: { ...current.commercial, ...(incoming.commercial || {}) },
+          solar: { ...current.solar, ...(incoming.solar || {}) },
+          materials: { ...current.materials, ...(incoming.materials || {}) },
+        };
+        // sanitize numbers
+        for (const k of Object.keys(merged)) {
+          for (const grade of ['standard', 'premium', 'high_spec']) {
+            if (merged[k][grade] !== undefined) {
+              const n = Number(merged[k][grade]);
+              if (!Number.isFinite(n) || n < 0) {
+                return send(res, 400, { error: `Invalid rate for ${k}.${grade}` });
+              }
+              merged[k][grade] = n;
+            }
+          }
+        }
+        cms.settings.estimator = merged;
+        saveCms(cms);
+        return send(res, 200, { estimator: merged });
       }
 
       if (method === 'PUT' && url === '/api/admin/slots') {
@@ -484,10 +665,79 @@ export function createCmsMiddleware() {
         }
       }
 
+      // PROJECTS CRUD
+      if (method === 'POST' && url === '/api/admin/projects') {
+        const body = await readJson(req);
+        const title = String(body.title || '').trim();
+        if (!title) return send(res, 400, { error: 'Project title is required.' });
+        const now = new Date().toISOString();
+        const project = {
+          id: body.id ? String(body.id).slice(0, 80) : nid('proj'),
+          title: title.slice(0, 180),
+          category: String(body.category || 'civic').slice(0, 40),
+          categoryLabel: String(body.categoryLabel || body.category || 'Civic').slice(0, 80),
+          client: String(body.client || '').slice(0, 180),
+          location: String(body.location || '').slice(0, 180),
+          state: String(body.state || '').slice(0, 80),
+          year: String(body.year || new Date().getFullYear()).slice(0, 20),
+          status: String(body.status || 'Completed').slice(0, 40),
+          scope: String(body.scope || '').slice(0, 300),
+          description: String(body.description || '').slice(0, 2000),
+          highlights: Array.isArray(body.highlights) ? body.highlights.slice(0, 20).map((h) => String(h).slice(0, 300)) : [],
+          image: String(body.image || '').slice(0, 500),
+          metrics: Array.isArray(body.metrics) ? body.metrics.slice(0, 10).map((m) => ({ label: String(m.label || '').slice(0, 60), value: String(m.value || '').slice(0, 80) })) : [],
+          createdAt: now,
+          updatedAt: now,
+        };
+        // ensure unique id
+        if (cms.projects.some((p) => p.id === project.id)) {
+          project.id = nid('proj');
+        }
+        cms.projects = [...liveProjects(cms), project];
+        saveCms(cms);
+        return send(res, 201, { project });
+      }
+
+      const projOne = url.match(/^\/api\/admin\/projects\/([^/]+)$/);
+      if (projOne) {
+        const id = projOne[1];
+        const proj = liveProjects(cms).find((p) => p.id === id);
+        if (!proj) return send(res, 404, { error: 'Project not found.' });
+
+        if (method === 'PATCH') {
+          const body = await readJson(req);
+          const fields = ['title', 'category', 'categoryLabel', 'client', 'location', 'state', 'year', 'status', 'scope', 'description', 'image'];
+          for (const f of fields) {
+            if (body[f] !== undefined) proj[f] = String(body[f]).slice(0, f === 'description' ? 2000 : 500);
+          }
+          if (body.highlights !== undefined) {
+            proj.highlights = Array.isArray(body.highlights) ? body.highlights.slice(0, 20).map((h) => String(h).slice(0, 300)) : [];
+          }
+          if (body.metrics !== undefined) {
+            proj.metrics = Array.isArray(body.metrics) ? body.metrics.slice(0, 10).map((m) => ({ label: String(m.label || '').slice(0, 60), value: String(m.value || '').slice(0, 80) })) : [];
+          }
+          proj.updatedAt = new Date().toISOString();
+          saveCms(cms);
+          return send(res, 200, { project: proj });
+        }
+
+        if (method === 'DELETE') {
+          proj.deleted = true;
+          proj.updatedAt = new Date().toISOString();
+          // also clear slots that referenced this project? slots use project-proj-... but we store custom id, so clear any slot containing its id
+          for (const [slot, pid] of Object.entries(cms.slots || {})) {
+            if (slot.includes(id) || pid === id) cms.slots[slot] = '';
+          }
+          saveCms(cms);
+          return send(res, 200, { ok: true, id });
+        }
+      }
+
       return send(res, 404, { error: 'Unknown API route.' });
     } catch (err) {
       const msg = err && err.message ? err.message : 'Server error';
-      const status = /too large|JSON|allowed|12 MB|Choose/i.test(msg) ? 400 : 500;
+      const status = /too large|JSON|allowed|12 MB|Choose|Invalid|required/i.test(msg) ? 400 : 500;
+      console.error('CMS error:', err);
       return send(res, status, { error: msg });
     }
   };

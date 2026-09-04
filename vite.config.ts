@@ -5,11 +5,11 @@ import path from 'path';
 import {defineConfig, type Plugin} from 'vite';
 import {createCmsMiddleware} from './server/cms.mjs';
 
-const brazilHeaders = {
-  'Content-Language': 'pt-BR, en',
-  'X-Deploy-Region': 'southamerica-northeast1',
-  'X-Deploy-Country': 'BR',
-  'X-Timezone': 'America/Sao_Paulo',
+const indiaHeaders = {
+  'Content-Language': 'en-IN, hi-IN',
+  'X-Deploy-Region': 'asia-south1',
+  'X-Deploy-Country': 'IN',
+  'X-Timezone': 'Asia/Kolkata',
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
 };
@@ -25,12 +25,17 @@ function injectOriginPlugin(): Plugin {
   const rewrite = (body: string, origin: string) => body.replaceAll('__SITE_ORIGIN__', origin);
 
   const attach = (server: {middlewares: {use: Function}}) => {
-    server.middlewares.use((req: {url?: string; headers: Record<string, unknown>; socket?: {encrypted?: boolean}}, res: {end: Function; setHeader: Function}, next: Function) => {
-      for (const [key, value] of Object.entries(brazilHeaders)) {
-        res.setHeader(key, value);
+    server.middlewares.use((req: {url?: string; headers: Record<string, unknown>; socket?: {encrypted?: boolean}}, res: {end: Function; setHeader: Function; setHeader?: any; getHeader?: any}, next: Function) => {
+      for (const [key, value] of Object.entries(indiaHeaders)) {
+        (res as any).setHeader(key, value);
       }
       const url = (req.url || '').split('?')[0];
       if (url.startsWith('/api/')) return next();
+      // SPA fallback for admin and blog
+      if (url === '/admin' || url.startsWith('/admin/') || url === '/blog' || url.startsWith('/blog/')) {
+        // let vite handle index.html fallback later, but ensure headers set
+        return next();
+      }
       const injectExt = ['.xml', '.txt', '.json', '.html', '.webmanifest'];
       const should = injectExt.some((ext) => url.endsWith(ext)) || url.endsWith('/') || url === '/robots.txt';
       if (!should) return next();
@@ -55,8 +60,8 @@ function injectOriginPlugin(): Plugin {
             : file.endsWith('.html')
               ? 'text/html; charset=utf-8'
               : 'text/plain; charset=utf-8';
-      res.setHeader('Content-Type', type);
-      res.end(body);
+      (res as any).setHeader('Content-Type', type);
+      (res as any).end(body);
     });
   };
 
@@ -98,18 +103,15 @@ export default defineConfig(() => {
       host: '0.0.0.0',
       port: 3000,
       allowedHosts: true as const,
-      headers: brazilHeaders,
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modify—file watching is disabled to prevent flickering during agent edits.
+      headers: indiaHeaders,
       hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
     preview: {
       host: '0.0.0.0',
       port: 3000,
       allowedHosts: true as const,
-      headers: brazilHeaders,
+      headers: indiaHeaders,
     },
   };
 });

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * Production static server — Brazil (São Paulo) environment.
- * Timezone America/Sao_Paulo, Content-Language pt-BR,en, southamerica-northeast1 headers.
+ * Production static server — India (Asia/Kolkata) environment.
+ * Timezone Asia/Kolkata, Content-Language en-IN,hi-IN, region asia-south1.
+ * SPA fallback for /admin fixed — no redirect, serves index.html.
  */
-process.env.TZ = process.env.TZ || 'America/Sao_Paulo';
-process.env.LANG = process.env.LANG || 'pt_BR.UTF-8';
+process.env.TZ = process.env.TZ || 'Asia/Kolkata';
+process.env.LANG = process.env.LANG || 'en_IN.UTF-8';
 
 import express from 'express';
 import fs from 'node:fs';
@@ -27,10 +28,10 @@ app.use(createCmsMiddleware());
 app.use((req, res, next) => {
   const origin = `${req.protocol}://${req.get('host')}`;
   res.locals.origin = origin;
-  res.setHeader('Content-Language', 'pt-BR, en');
-  res.setHeader('X-Deploy-Region', 'southamerica-northeast1');
-  res.setHeader('X-Deploy-Country', 'BR');
-  res.setHeader('X-Timezone', 'America/Sao_Paulo');
+  res.setHeader('Content-Language', 'en-IN, hi-IN');
+  res.setHeader('X-Deploy-Region', 'asia-south1');
+  res.setHeader('X-Deploy-Country', 'IN');
+  res.setHeader('X-Timezone', 'Asia/Kolkata');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(self), microphone=(), camera=()');
@@ -43,7 +44,21 @@ function injectOrigin(html, origin) {
   return html.replaceAll('__SITE_ORIGIN__', origin);
 }
 
-app.get(['/sitemap.xml', '/sitemap-pages.xml', '/sitemap-pt-br.xml', '/sitemap-images.xml', '/rss.xml', '/atom.xml', '/robots.txt', '/feed.json', '/llms.txt', '/llms-full.txt'], (req, res, next) => {
+// Early SPA handler for /admin and /blog — must be BEFORE static to avoid 301 redirect
+app.get(['/admin', '/admin/', '/admin/*', '/blog', '/blog/*'], (req, res, next) => {
+  // admin SPA: always serve index.html
+  if (req.path === '/admin' || req.path === '/admin/' || req.path.startsWith('/admin/')) {
+    const index = path.join(DIST, 'index.html');
+    if (fs.existsSync(index)) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      return res.send(injectOrigin(fs.readFileSync(index, 'utf8'), res.locals.origin));
+    }
+  }
+  return next();
+});
+
+app.get(['/sitemap.xml', '/sitemap-pages.xml', '/sitemap-pt-br.xml', '/sitemap-images.xml', '/sitemap-hi.xml', '/rss.xml', '/atom.xml', '/robots.txt', '/feed.json', '/llms.txt', '/llms-full.txt', '/seo-index.json', '/humans.txt'], (req, res, next) => {
   const file = path.join(DIST, req.path);
   if (!fs.existsSync(file)) return next();
   const body = injectOrigin(fs.readFileSync(file, 'utf8'), res.locals.origin);
@@ -58,6 +73,11 @@ app.get(['/sitemap.xml', '/sitemap-pages.xml', '/sitemap-pt-br.xml', '/sitemap-i
 });
 
 app.use((req, res, next) => {
+  // For other HTML pages: /about/ etc
+  if (req.path.startsWith('/api/')) return next();
+  if (req.path === '/admin' || req.path.startsWith('/admin/') || req.path === '/blog' || req.path.startsWith('/blog/')) {
+    return next();
+  }
   if (!req.path.endsWith('.html') && req.path !== '/' && !req.path.endsWith('/')) return next();
   const rel = req.path === '/' ? 'index.html' : req.path.endsWith('/') ? path.join(req.path, 'index.html') : req.path;
   const file = path.join(DIST, rel);
@@ -72,6 +92,7 @@ app.use((req, res, next) => {
 app.use(
   express.static(DIST, {
     extensions: ['html'],
+    redirect: false,
     maxAge: '7d',
     setHeaders(res, filePath) {
       if (filePath.endsWith('.html')) res.setHeader('Cache-Control', 'public, max-age=60');
@@ -80,9 +101,13 @@ app.use(
 );
 
 app.get('*', (req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
   const index = path.join(DIST, 'index.html');
   if (fs.existsSync(index)) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache');
     res.send(injectOrigin(fs.readFileSync(index, 'utf8'), res.locals.origin));
     return;
   }
@@ -91,5 +116,5 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, HOST, () => {
   console.log(`Rudra Constructions listening on http://${HOST}:${PORT}`);
-  console.log(`TZ=${process.env.TZ} LANG=${process.env.LANG} region=southamerica-northeast1`);
+  console.log(`TZ=${process.env.TZ} LANG=${process.env.LANG} region=asia-south1 country=IN Indian SEO — admin SPA fixed`);
 });

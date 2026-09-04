@@ -1,7 +1,90 @@
 {
-  "version": 1,
+  "version": 2,
   "settings": {
-    "passwordHash": "e3b70360532cdeebdd9a63b5caf185d0:3a436ccd7dede40a81e958e212c231e2534f49c197084f5935a0bc2eda85c4f3"
+    "passwordHash": "e3b70360532cdeebdd9a63b5caf185d0:3a436ccd7dede40a81e958e212c231e2534f49c197084f5935a0bc2eda85c4f3",
+    "company": {
+      "name": "Rudra Constructions & Suppliers",
+      "legalName": "Rudra Constructions & Suppliers Pvt. Ltd.",
+      "turnover": "₹14.65 Crore",
+      "turnoverShort": "₹14.65 Cr+",
+      "turnoverDetail": "Civil & Solar Works",
+      "turnoverTag": "FY 2024-25",
+      "stats": [
+        {
+          "label": "Audited Turnover",
+          "value": "₹14.65 Cr+",
+          "detail": "Civil & Solar Works",
+          "tag": "FY 2024-25"
+        },
+        {
+          "label": "States Served",
+          "value": "11 States",
+          "detail": "Pan-India Footprint",
+          "tag": "18+ Depots"
+        },
+        {
+          "label": "Infrastructure Projects",
+          "value": "35+ Sites",
+          "detail": "Completed & Active",
+          "tag": "Handed Over"
+        },
+        {
+          "label": "Clean Solar Units",
+          "value": "1,200+",
+          "detail": "Installed Capacities",
+          "tag": "Microgrids"
+        },
+        {
+          "label": "Field Workforce",
+          "value": "250+",
+          "detail": "Engineers & Crews",
+          "tag": "Biometric Verified"
+        },
+        {
+          "label": "Statutory Compliance",
+          "value": "100%",
+          "detail": "NABL & IS 456 Standards",
+          "tag": "Zero Deviation"
+        }
+      ]
+    },
+    "estimator": {
+      "civic": {
+        "standard": 1650,
+        "premium": 1950,
+        "high_spec": 2300,
+        "unit": "sq.ft built-up",
+        "material": "RCC M25 concrete, Fe 550D TMT, brick masonry, ramp railings, UPVC fixtures"
+      },
+      "healthcare": {
+        "standard": 2200,
+        "premium": 2750,
+        "high_spec": 3400,
+        "unit": "sq.ft ward area",
+        "material": "Antimicrobial vinyl flooring, medical gas lines, acoustic ceiling, ICU electrical"
+      },
+      "commercial": {
+        "standard": 2000,
+        "premium": 2500,
+        "high_spec": 3100,
+        "unit": "sq.ft commercial space",
+        "material": "Structural glazing, high-speed lift provisions, firefighting systems, vitrified tiles"
+      },
+      "solar": {
+        "standard": 18000,
+        "premium": 23500,
+        "high_spec": 29000,
+        "unit": "autonomous solar poles / kW",
+        "material": "Mono PERC solar panels, LiFePO4 batteries, hot-dip GI octagonal poles, IoT sensors"
+      },
+      "materials": {
+        "standard": 62000,
+        "premium": 62000,
+        "high_spec": 62000,
+        "unit": "metric tonnes certified supply",
+        "material": "Primary mill test certificates, weighbridge tickets, direct dispatch"
+      }
+    }
   },
   "slots": {
     "hero": "img-hero",
@@ -70,5 +153,6 @@
       "updatedAt": "2025-05-20T08:30:00.000Z"
     }
   ],
-  "blogs": []
+  "blogs": [],
+  "projects": []
 }

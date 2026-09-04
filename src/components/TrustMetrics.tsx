@@ -1,46 +1,16 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Award, Globe2, Briefcase, Sun, Users2, ShieldCheck } from 'lucide-react';
+import { useCms } from '../cms/CmsProvider';
+import { COMPANY_INFO } from '../data/companyData';
 
 export const TrustMetrics: React.FC = () => {
-  const metrics = [
-    {
-      label: "Audited Turnover",
-      value: "₹14.65 Cr",
-      detail: "Civil & Solar Works",
-      tag: "FY 2024-25",
-    },
-    {
-      label: "States Served",
-      value: "11 States",
-      detail: "Pan-India Footprint",
-      tag: "18+ Depots",
-    },
-    {
-      label: "Institutional Assets",
-      value: "35+ Sites",
-      detail: "Completed & Active",
-      tag: "Handed Over",
-    },
-    {
-      label: "Clean Solar Units",
-      value: "1,200+",
-      detail: "Installed Capacities",
-      tag: "Microgrids",
-    },
-    {
-      label: "Field Workforce",
-      value: "250+",
-      detail: "Engineers & Crews",
-      tag: "Biometric Verified",
-    },
-    {
-      label: "Statutory Compliance",
-      value: "100%",
-      detail: "NABL & IS 456 Standards",
-      tag: "Zero Deviation",
-    }
-  ];
+  const { company } = useCms();
+  const metrics = company?.stats && company.stats.length > 0 ? company.stats : COMPANY_INFO.stats.map(s => ({
+    label: s.label,
+    value: s.value,
+    detail: (s as any).detail || (s as any).change || '',
+    tag: (s as any).tag || '',
+  }));
 
   return (
     <section className="bg-[#fafafa] border-b border-[#e7e5e4] py-10 sm:py-14 relative z-10">

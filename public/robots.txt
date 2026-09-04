@@ -1,11 +1,13 @@
-# Rudra Constructions & Suppliers — full indexing
-# Deploy region: southamerica-northeast1 (São Paulo, Brazil)
-# Timezone: America/Sao_Paulo
-# Languages: en, pt-BR
+# Rudra Constructions & Suppliers — Indian SEO full indexing
+# Deploy region: asia-south1 (India)
+# Timezone: Asia/Kolkata
+# Languages: en-IN, hi-IN
+# Admin: /admin — turnover & estimation editable
 
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /admin/
 Disallow: /src/
 
 User-agent: Googlebot
@@ -70,5 +72,4 @@ Host: __SITE_ORIGIN__
 Sitemap: __SITE_ORIGIN__/sitemap.xml
 Sitemap: __SITE_ORIGIN__/sitemap-pages.xml
 Sitemap: __SITE_ORIGIN__/sitemap-images.xml
-Sitemap: __SITE_ORIGIN__/sitemap-pt-br.xml
 Sitemap: __SITE_ORIGIN__/rss.xml

@@ -1,10 +1,13 @@
-/* TEAM */
+/* TEAM — Indian SEO */
 Publisher: Rudra Constructions & Suppliers Pvt. Ltd.
 Contact: rudraconstructionsupplier14@gmail.com
-Location: Ward No.2, Sikta Belwa, Ramnagar, West Champaran, Bihar 845103, India
+Location: Ward No.2, Sikta Belwa, Ramnagar, West Champaran, Bihar 845103, India India
+Phone: +91 80995 88978
 
 /* SITE */
 Last update: 2026-09-04
-Languages: en, pt-BR
+Languages: en-IN, hi-IN, en
 Standards: HTML5, Schema.org, Open Graph, IndexNow, llms.txt, RSS, Atom, JSON Feed
-Deploy: Brazil São Paulo (southamerica-northeast1), timezone America/Sao_Paulo
+Deploy: India asia-south1, timezone Asia/Kolkata, country IN
+SEO: Indian SEO optimized — Class-A civil contractor Bihar, PWD CPWD, Panchayat Sarkar Bhawan builder
+Admin: /admin — Turnover & Estimation editable, SPA fallback fixed

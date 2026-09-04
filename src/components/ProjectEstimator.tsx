@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Calculator, CheckCircle2, ChevronRight, X } from 'lucide-react';
+import { CheckCircle2, ChevronRight, X } from 'lucide-react';
 import { STATES_SERVED } from '../data/companyData';
+import { useCms } from '../cms/CmsProvider';
 
 interface ProjectEstimatorProps {
   isOpen?: boolean;
@@ -11,45 +12,45 @@ interface ProjectEstimatorProps {
 export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onClose, isModal = false }) => {
   const [projectType, setProjectType] = useState<'civic' | 'healthcare' | 'commercial' | 'solar' | 'materials'>('civic');
   const [selectedState, setSelectedState] = useState<string>('Bihar');
-  const [scaleValue, setScaleValue] = useState<number>(5000); // sq ft or units
+  const [scaleValue, setScaleValue] = useState<number>(5000);
   const [qualityGrade, setQualityGrade] = useState<'standard' | 'premium' | 'high_spec'>('premium');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
   const [clientEmail, setClientEmail] = useState('');
 
-  // CPWD Delhi Schedule of Rates (DSR 2023-2025) Bill of Quantities (BOQ) standard computation
+  const { estimator } = useCms();
+
   const calculateEstimate = () => {
-    let ratePerUnit = 1800; // default standard civic per sqft
-    let unitLabel = 'sq.ft built-up area';
+    const rates = estimator?.[projectType] || {
+      standard: 1800,
+      premium: 1950,
+      high_spec: 2300,
+      unit: 'sq.ft built-up area',
+      material: 'Grade 53 Cement, Fe 550D TMT Steel, Graded Aggregates',
+    };
+
+    let ratePerUnit = 1800;
+    let unitLabel = rates.unit || 'sq.ft built-up area';
     let timelineMonths = 6;
-    let materialReqs = 'Grade 53 Cement, Fe 550D TMT Steel, Graded Aggregates';
+    let materialReqs = rates.material;
 
     if (projectType === 'civic') {
-      ratePerUnit = qualityGrade === 'standard' ? 1650 : qualityGrade === 'premium' ? 1950 : 2300;
-      unitLabel = 'sq.ft built-up';
+      ratePerUnit = qualityGrade === 'standard' ? rates.standard : qualityGrade === 'premium' ? rates.premium : rates.high_spec;
       timelineMonths = Math.max(4, Math.round(scaleValue / 900));
-      materialReqs = 'RCC M25 concrete, Fe 550D TMT, brick masonry, ramp railings, UPVC fixtures';
     } else if (projectType === 'healthcare') {
-      ratePerUnit = qualityGrade === 'standard' ? 2200 : qualityGrade === 'premium' ? 2750 : 3400;
-      unitLabel = 'sq.ft ward area';
+      ratePerUnit = qualityGrade === 'standard' ? rates.standard : qualityGrade === 'premium' ? rates.premium : rates.high_spec;
       timelineMonths = Math.max(3, Math.round(scaleValue / 1200));
-      materialReqs = 'Antimicrobial vinyl flooring, medical gas lines, acoustic ceiling, ICU electrical';
     } else if (projectType === 'commercial') {
-      ratePerUnit = qualityGrade === 'standard' ? 2000 : qualityGrade === 'premium' ? 2500 : 3100;
-      unitLabel = 'sq.ft commercial space';
+      ratePerUnit = qualityGrade === 'standard' ? rates.standard : qualityGrade === 'premium' ? rates.premium : rates.high_spec;
       timelineMonths = Math.max(6, Math.round(scaleValue / 700));
-      materialReqs = 'Structural glazing, high-speed lift provisions, firefighting systems, vitrified tiles';
     } else if (projectType === 'solar') {
-      ratePerUnit = qualityGrade === 'standard' ? 18000 : qualityGrade === 'premium' ? 23500 : 29000;
-      unitLabel = 'autonomous solar poles / kW';
+      ratePerUnit = qualityGrade === 'standard' ? rates.standard : qualityGrade === 'premium' ? rates.premium : rates.high_spec;
       timelineMonths = Math.max(1, Math.round(scaleValue / 100));
-      materialReqs = 'Mono PERC solar panels, LiFePO4 batteries, hot-dip GI octagonal poles, IoT sensors';
     } else if (projectType === 'materials') {
-      ratePerUnit = 62000;
-      unitLabel = 'metric tonnes certified supply';
+      ratePerUnit = rates.standard;
+      unitLabel = rates.unit;
       timelineMonths = 1;
-      materialReqs = 'Primary mill test certificates, weighbridge tickets, direct dispatch';
     }
 
     const totalCost = scaleValue * ratePerUnit;
@@ -63,7 +64,7 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
       totalCost,
       totalInLakhs,
       totalInCrores,
-      materialReqs
+      materialReqs,
     };
   };
 
@@ -76,17 +77,14 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
 
   const content = (
     <div className="space-y-8">
-      {/* Header Title */}
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-[14px] text-[#7a7a7a] tracking-[-0.224px]">
-            Statutory Estimation Tool
-          </p>
+          <p className="text-[14px] text-[#7a7a7a] tracking-[-0.224px]">Statutory Estimation Tool — Admin Editable Rates</p>
           <h2 className="text-[28px] sm:text-[34px] font-semibold text-[#1d1d1f] tracking-[-0.02em] leading-tight mt-1">
             Calculate budget & schedule estimates.
           </h2>
           <p className="text-[15px] text-[#7a7a7a] mt-1">
-            Generate indicative Bill of Quantities (BOQ) metrics based on CPWD Schedule of Rates.
+            Rates are managed from Admin Panel → Estimator. CPWD DSR 2023-25 benchmark, updated for Indian market.
           </p>
         </div>
         {isModal && onClose && (
@@ -100,13 +98,8 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
         )}
       </div>
 
-      {/* Estimator Controls */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* Left Form Inputs */}
         <div className="lg:col-span-7 space-y-6">
-          
-          {/* Project Type: Apple Segmented Pill Style */}
           <div>
             <label className="block text-[12px] uppercase tracking-wider font-semibold text-[#7a7a7a] mb-2.5">
               1. Select Project Vertical:
@@ -117,7 +110,7 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
                 { id: 'healthcare', label: 'Healthcare' },
                 { id: 'commercial', label: 'Commercial' },
                 { id: 'solar', label: 'Solar' },
-                { id: 'materials', label: 'Bulk Supply' }
+                { id: 'materials', label: 'Bulk Supply' },
               ].map((type) => (
                 <button
                   key={type.id}
@@ -140,7 +133,6 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
             </div>
           </div>
 
-          {/* Scale & Units Slider */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-[12px] uppercase tracking-wider font-semibold text-[#7a7a7a]">
@@ -150,7 +142,7 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
                 {scaleValue.toLocaleString()} {projectType === 'solar' ? 'Units' : projectType === 'materials' ? 'MT' : 'Sq.Ft'}
               </span>
             </div>
-            
+
             <input
               type="range"
               min={projectType === 'solar' ? 10 : projectType === 'materials' ? 20 : 1000}
@@ -166,7 +158,6 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
             </div>
           </div>
 
-          {/* Location State & Specifications */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-[12px] uppercase tracking-wider font-semibold text-[#7a7a7a] mb-1.5">
@@ -200,15 +191,13 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
               </select>
             </div>
           </div>
-
         </div>
 
-        {/* Right Output: Estimated BOQ & Submission (Apple surface-tile-1 #272729) */}
         <div className="lg:col-span-5 bg-[#272729] text-white p-6 sm:p-7 rounded-[18px] border border-[#333336] flex flex-col justify-between space-y-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <span className="text-[12px] font-semibold text-[#2997ff] uppercase tracking-wider">Estimated Project Budget</span>
-              <span className="text-[11px] text-[#cccccc]">CPWD Benchmark</span>
+              <span className="text-[11px] text-[#cccccc]">Indian DSR</span>
             </div>
 
             <div>
@@ -220,7 +209,6 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
               </div>
             </div>
 
-            {/* Quick Metrics */}
             <div className="grid grid-cols-2 gap-2.5 pt-1">
               <div className="bg-white/5 p-3 rounded-[12px] border border-white/10">
                 <span className="text-[11px] text-[#cccccc] block">Duration</span>
@@ -234,18 +222,13 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
 
             <div className="text-[13px] text-[#cccccc] bg-white/5 p-3 rounded-[12px] border border-white/10 space-y-1">
               <span className="text-white block font-medium">Standard Material Conformance:</span>
-              <p className="text-[12px] text-[#cccccc] leading-relaxed">
-                {estimate.materialReqs}
-              </p>
+              <p className="text-[12px] text-[#cccccc] leading-relaxed">{estimate.materialReqs}</p>
             </div>
           </div>
 
-          {/* Official BOQ Request Form */}
           {!formSubmitted ? (
             <form onSubmit={handleSubmitInquiry} className="space-y-3 pt-4 border-t border-white/10">
-              <div className="text-[12px] font-semibold text-[#2997ff] uppercase tracking-wider">
-                Request Itemized BOQ Schedule:
-              </div>
+              <div className="text-[12px] font-semibold text-[#2997ff] uppercase tracking-wider">Request Itemized BOQ Schedule:</div>
               <input
                 type="text"
                 required
@@ -289,9 +272,7 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
               </p>
             </div>
           )}
-
         </div>
-
       </div>
     </div>
   );
@@ -300,9 +281,7 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
     if (!isOpen) return null;
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div className="bg-[#ffffff] rounded-[24px] max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 border border-[#e0e0e0]">
-          {content}
-        </div>
+        <div className="bg-[#ffffff] rounded-[24px] max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 border border-[#e0e0e0]">{content}</div>
       </div>
     );
   }
@@ -310,9 +289,7 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ isOpen, onCl
   return (
     <section className="py-16 sm:py-20 bg-[#f5f5f7] border-b border-[#e0e0e0]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#ffffff] p-6 sm:p-10 rounded-[20px] border border-[#e0e0e0]">
-          {content}
-        </div>
+        <div className="bg-[#ffffff] p-6 sm:p-10 rounded-[20px] border border-[#e0e0e0]">{content}</div>
       </div>
     </section>
   );
