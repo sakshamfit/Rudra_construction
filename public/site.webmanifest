@@ -1,0 +1,30 @@
+{
+  "name": "Rudra Constructions & Suppliers",
+  "short_name": "Rudra Constructions",
+  "description": "Class-A civil engineering, Panchayat Sarkar Bhawans, hospital ward retrofits, rooftop solar microgrids, and certified bulk material logistics across 11 Indian states.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f5f5f5",
+  "theme_color": "#292524",
+  "categories": ["business", "productivity"],
+  "iarc_rating_id": "",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/images/rudra_hero_construction_1788465374495.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

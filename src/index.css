@@ -1,6 +1,21 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 100;
+}
+.skip-to-content:focus {
+  left: 8px;
+  background: #ffffff;
+  color: #0c0a09;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e7e5e4;
+}
+
 @layer base {
   :root {
     --color-primary: #292524;

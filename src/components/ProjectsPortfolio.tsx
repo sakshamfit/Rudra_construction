@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Calendar, CheckCircle2, ChevronRight, X, Activity, ShieldCheck, Sun } from 'lucide-react';
 import { PROJECTS } from '../data/companyData';
 import { ProjectItem } from '../types';
+import { useCms } from '../cms/CmsProvider';
 
 export const ProjectsPortfolio: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -16,6 +17,8 @@ export const ProjectsPortfolio: React.FC = () => {
     { id: 'infrastructure', label: 'Infrastructure' },
     { id: 'materials', label: 'Material Supply' }
   ];
+
+  const { resolveSlotUrl } = useCms();
 
   const filteredProjects = activeCategory === 'all'
     ? PROJECTS
@@ -74,9 +77,13 @@ export const ProjectsPortfolio: React.FC = () => {
                 {/* Image Container with Floating Overboard Tag */}
                 <div className="relative h-60 rounded-t-[19px] overflow-hidden bg-[#f0efed]">
                   <img
-                    src={project.image}
-                    alt={project.title}
+                    src={resolveSlotUrl(`project-${project.id}`, project.image)}
+                    alt={`${project.title} — ${project.location}, ${project.state} — ${project.client}`}
                     className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-600"
+                    width={800}
+                    height={480}
+                    loading="lazy"
+                    decoding="async"
                     referrerPolicy="no-referrer"
                   />
 
@@ -131,6 +138,7 @@ export const ProjectsPortfolio: React.FC = () => {
 
               {/* Action Button: Refined Pill */}
               <div className="px-6 pb-6 pt-2">
+                <div className="flex flex-col gap-2">
                 <button
                   onClick={() => setSelectedProject(project)}
                   className="apple-btn-active w-full inline-flex items-center justify-between py-2.5 px-4 text-[13px] font-medium text-[#292524] bg-[#fafafa] hover:bg-[#f0efed] border border-[#e7e5e4] rounded-full cursor-pointer transition-all"
@@ -138,6 +146,13 @@ export const ProjectsPortfolio: React.FC = () => {
                   <span>View Engineering Specs</span>
                   <ChevronRight className="w-4 h-4 text-[#777169] group-hover:translate-x-0.5 transition-transform" />
                 </button>
+                <a
+                  href={`/projects/${project.id}/`}
+                  className="text-[12px] text-[#78716c] hover:text-[#0c0a09] text-center underline underline-offset-4"
+                >
+                  Open indexed case study
+                </a>
+                </div>
               </div>
 
             </motion.div>

@@ -143,6 +143,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                   <span>Inquire for {activeService.title.split(' ')[0]}</span>
                   <ChevronRight className="w-4 h-4" />
                 </a>
+                <a
+                  href={`/services/${activeService.id}/`}
+                  className="apple-btn-active w-full inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-[14px] font-medium cursor-pointer text-center border border-white/15"
+                >
+                  <span>Index page</span>
+                </a>
               </div>
 
             </div>

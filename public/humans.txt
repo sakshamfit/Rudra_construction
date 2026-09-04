@@ -1,0 +1,10 @@
+/* TEAM */
+Publisher: Rudra Constructions & Suppliers Pvt. Ltd.
+Contact: rudraconstructionsupplier14@gmail.com
+Location: Ward No.2, Sikta Belwa, Ramnagar, West Champaran, Bihar 845103, India
+
+/* SITE */
+Last update: 2026-09-04
+Languages: en, pt-BR
+Standards: HTML5, Schema.org, Open Graph, IndexNow, llms.txt, RSS, Atom, JSON Feed
+Deploy: Brazil São Paulo (southamerica-northeast1), timezone America/Sao_Paulo

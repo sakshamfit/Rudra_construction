@@ -1,0 +1,52 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Rudra Constructions & Suppliers",
+  "home_page_url": "__SITE_ORIGIN__/",
+  "feed_url": "__SITE_ORIGIN__/feed.json",
+  "description": "From structural engineering to turnkey commissioning, we deliver certified Class-1 civil construction, hospital wards, solar microgrids, and bulk materials across 11 Indian states.",
+  "language": "en",
+  "items": [
+    {
+      "id": "__SITE_ORIGIN__/projects/proj-1/",
+      "url": "__SITE_ORIGIN__/projects/proj-1/",
+      "title": "Panchayat Sarkar Bhawan Administrative Complex",
+      "content_text": "Constructed standard-format, disaster-resilient Panchayat Sarkar Bhawan comprising public grievance halls, elected representative offices, digital citizen service centers, sanitized washrooms, and solar backup power.",
+      "date_published": "2025-05-01T08:30:00+05:30"
+    },
+    {
+      "id": "__SITE_ORIGIN__/projects/proj-2/",
+      "url": "__SITE_ORIGIN__/projects/proj-2/",
+      "title": "Public Hospital Inpatient Ward Modernization",
+      "content_text": "Complete structural renovation and retrofitting of a multi-bed hospital inpatient ward. Features medical-grade anti-static vinyl flooring, acoustic false ceiling with soothing blue LED illumination, ergonomic patient beds, and specialized sanitation zones.",
+      "date_published": "2025-05-01T08:30:00+05:30"
+    },
+    {
+      "id": "__SITE_ORIGIN__/projects/proj-3/",
+      "url": "__SITE_ORIGIN__/projects/proj-3/",
+      "title": "Solar Rural Electrification & Street Lighting Mission",
+      "content_text": "Executed widespread installation of autonomous high-lumen LED solar street light systems across rural villages, community squares, and primary health centers. Provides dusk-to-dawn safety, crime deterrence, and eco-friendly lighting.",
+      "date_published": "2025-05-01T08:30:00+05:30"
+    },
+    {
+      "id": "__SITE_ORIGIN__/projects/proj-4/",
+      "url": "__SITE_ORIGIN__/projects/proj-4/",
+      "title": "Regional Highway Overpass & Segmental Infrastructure",
+      "content_text": "Execution of reinforced concrete substructure and pier columns for critical bypass corridor. Utilizes computerized batching, high-tensile Fe 550D rebar cages, and self-compacting concrete to ensure long-term structural integrity under heavy axle traffic.",
+      "date_published": "2025-05-01T08:30:00+05:30"
+    },
+    {
+      "id": "__SITE_ORIGIN__/projects/proj-5/",
+      "url": "__SITE_ORIGIN__/projects/proj-5/",
+      "title": "Fisheries & Animal Resource Technical Facility",
+      "content_text": "Specialized institutional facility built for veterinary diagnosis, aquatic testing, and storage of animal resource supplies. Includes moisture-resistant wall treatments, dedicated drainage, cold room enclosures, and staff administrative quarters.",
+      "date_published": "2025-05-01T08:30:00+05:30"
+    },
+    {
+      "id": "__SITE_ORIGIN__/projects/proj-6/",
+      "url": "__SITE_ORIGIN__/projects/proj-6/",
+      "title": "Bulk TMT Steel & Cement Logistics Consignment",
+      "content_text": "Consolidated procurement and logistics dispatch of over 1,800 Metric Tonnes of primary steel and 45,000 bags of OPC 53 cement for watershed development structures, check dams, and rural housing clusters.",
+      "date_published": "2025-05-01T08:30:00+05:30"
+    }
+  ]
+}

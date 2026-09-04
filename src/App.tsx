@@ -13,20 +13,26 @@ import { ProjectEstimator } from './components/ProjectEstimator';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { BrochureModal } from './components/BrochureModal';
+import { SeoRuntime } from './components/SeoRuntime';
+import { GallerySection } from './components/GallerySection';
+import { BlogSection } from './components/BlogSection';
+import { CmsProvider } from './cms/CmsProvider';
 
 export default function App() {
   const [isBrochureOpen, setIsBrochureOpen] = useState(false);
   const [isEstimatorModalOpen, setIsEstimatorModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f5f5] text-[#0c0a09] relative selection:bg-[#a7e5d3] selection:text-[#0c0a09]">
+    <CmsProvider>
+    <div className="min-h-screen flex flex-col bg-[#f5f5f5] text-[#0c0a09] relative selection:bg-[#a7e5d3] selection:text-[#0c0a09]" itemScope itemType="https://schema.org/WebPage">
+      <SeoRuntime />
       {/* Navigation Header */}
       <Navbar
         onOpenEstimator={() => setIsEstimatorModalOpen(true)}
         onOpenBrochure={() => setIsBrochureOpen(true)}
       />
 
-      <main className="flex-grow relative z-10">
+      <main id="main-content" className="flex-grow relative z-10" itemProp="mainContentOfPage">
         {/* Hero Section */}
         <Hero
           onOpenEstimator={() => setIsEstimatorModalOpen(true)}
@@ -44,6 +50,12 @@ export default function App() {
 
         {/* Landmark Projects & Portfolio */}
         <ProjectsPortfolio />
+
+        {/* CMS-managed site gallery */}
+        <GallerySection />
+
+        {/* CMS-managed journal */}
+        <BlogSection />
 
         {/* 5-Stage Execution Methodology */}
         <MethodologySection />
@@ -85,5 +97,6 @@ export default function App() {
         onClose={() => setIsEstimatorModalOpen(false)}
       />
     </div>
+    </CmsProvider>
   );
 }

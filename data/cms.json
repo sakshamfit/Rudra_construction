@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "settings": {
+    "passwordHash": "e3b70360532cdeebdd9a63b5caf185d0:3a436ccd7dede40a81e958e212c231e2534f49c197084f5935a0bc2eda85c4f3"
+  },
+  "slots": {
+    "hero": "img-hero",
+    "project-proj-1": "img-civic",
+    "project-proj-2": "img-hospital",
+    "project-proj-3": "img-solar",
+    "project-proj-4": "img-hero",
+    "project-proj-5": "img-civic",
+    "project-proj-6": "img-hero"
+  },
+  "photos": [
+    {
+      "id": "img-hero",
+      "url": "/assets/images/rudra_hero_construction_1788465374495.jpg",
+      "filename": "rudra_hero_construction_1788465374495.jpg",
+      "title": "Heavy civil engineering site",
+      "alt": "Rudra Constructions civil engineering and infrastructure precision — Panchayat Sarkar Bhawan, Bihar",
+      "caption": "Class-A civil works, Bihar",
+      "section": "hero",
+      "visible": true,
+      "showInGallery": true,
+      "builtin": true,
+      "createdAt": "2025-01-15T08:30:00.000Z",
+      "updatedAt": "2025-01-15T08:30:00.000Z"
+    },
+    {
+      "id": "img-civic",
+      "url": "/assets/images/rudra_civic_bhawan_1788465407931.jpg",
+      "filename": "rudra_civic_bhawan_1788465407931.jpg",
+      "title": "Panchayat Sarkar Bhawan",
+      "alt": "Panchayat Sarkar Bhawan administrative complex constructed in Bihar",
+      "caption": "Two-story civic administrative building",
+      "section": "civic",
+      "visible": true,
+      "showInGallery": true,
+      "builtin": true,
+      "createdAt": "2025-03-01T08:30:00.000Z",
+      "updatedAt": "2025-03-01T08:30:00.000Z"
+    },
+    {
+      "id": "img-hospital",
+      "url": "/assets/images/rudra_hospital_ward_1788465423465.jpg",
+      "filename": "rudra_hospital_ward_1788465423465.jpg",
+      "title": "Hospital inpatient ward",
+      "alt": "Modernized 24-bed public hospital inpatient ward",
+      "caption": "Antimicrobial clinical ward",
+      "section": "healthcare",
+      "visible": true,
+      "showInGallery": true,
+      "builtin": true,
+      "createdAt": "2025-04-10T08:30:00.000Z",
+      "updatedAt": "2025-04-10T08:30:00.000Z"
+    },
+    {
+      "id": "img-solar",
+      "url": "/assets/images/rudra_solar_infra_1788465391292.jpg",
+      "filename": "rudra_solar_infra_1788465391292.jpg",
+      "title": "Solar street lighting",
+      "alt": "Solar street lighting and rooftop microgrids",
+      "caption": "Rural and municipal solar lighting",
+      "section": "solar",
+      "visible": true,
+      "showInGallery": true,
+      "builtin": true,
+      "createdAt": "2025-05-20T08:30:00.000Z",
+      "updatedAt": "2025-05-20T08:30:00.000Z"
+    }
+  ],
+  "blogs": []
+}

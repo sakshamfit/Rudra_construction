@@ -108,8 +108,24 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBrochure, onOpenEstimator 
               <li><a href="#presence" className="hover:text-[#292524] transition-colors">Pan-India Reach</a></li>
               <li><a href="#clients" className="hover:text-[#292524] transition-colors">Clients</a></li>
               <li><a href="#estimator-section" className="hover:text-[#292524] transition-colors">Cost Estimator</a></li>
+              <li><a href="/#gallery" className="hover:text-[#292524] transition-colors">Gallery</a></li>
+              <li><a href="/blog" className="hover:text-[#292524] transition-colors">Journal</a></li>
               <li><a href="#faq" className="hover:text-[#292524] transition-colors">FAQs</a></li>
               <li><a href="#contact" className="hover:text-[#292524] transition-colors">RFP &amp; Tender</a></li>
+            </ul>
+            <h4 className="text-[12px] font-semibold uppercase tracking-wider text-[#1d1d1f] pt-3">
+              Index pages
+            </h4>
+            <ul className="space-y-2 text-[13px]">
+              <li><a href="/about/" className="hover:text-[#292524] transition-colors">About (index)</a></li>
+              <li><a href="/services/" className="hover:text-[#292524] transition-colors">All services</a></li>
+              <li><a href="/projects/" className="hover:text-[#292524] transition-colors">All projects</a></li>
+              <li><a href="/locations/" className="hover:text-[#292524] transition-colors">All offices</a></li>
+              <li><a href="/presence/" className="hover:text-[#292524] transition-colors">11 states</a></li>
+              <li><a href="/worksites/" className="hover:text-[#292524] transition-colors">Worksites</a></li>
+              <li><a href="/faq/" className="hover:text-[#292524] transition-colors">FAQ index</a></li>
+              <li><a href="/directory/" className="hover:text-[#292524] transition-colors">Citation / backlink kit</a></li>
+              <li><a href="/pt-br/" hrefLang="pt-BR" lang="pt-BR" className="hover:text-[#292524] transition-colors">Português (Brasil)</a></li>
             </ul>
           </div>
 
@@ -119,12 +135,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBrochure, onOpenEstimator 
               Engineering Disciplines
             </h4>
             <ul className="space-y-2 text-[13px] text-[#7a7a7a]">
-              <li>Civil & Structural Heavy Works</li>
-              <li>Panchayat Sarkar Bhawan Administrative Hubs</li>
-              <li>Hospital Inpatient Ward Modernization</li>
-              <li>Solar Street Lighting & Rooftop PV</li>
-              <li>Commercial & Residential Facilities</li>
-              <li>Primary Mill TMT & Grade-53 Cement</li>
+              <li><a href="/services/civil-structural/" className="hover:text-[#292524] transition-colors">Civil &amp; Structural Heavy Works</a></li>
+              <li><a href="/services/infrastructure-gov/" className="hover:text-[#292524] transition-colors">Panchayat Sarkar Bhawan Administrative Hubs</a></li>
+              <li><a href="/services/healthcare-modular/" className="hover:text-[#292524] transition-colors">Hospital Inpatient Ward Modernization</a></li>
+              <li><a href="/services/solar-renewable/" className="hover:text-[#292524] transition-colors">Solar Street Lighting &amp; Rooftop PV</a></li>
+              <li><a href="/services/residential-commercial/" className="hover:text-[#292524] transition-colors">Commercial &amp; Residential Facilities</a></li>
+              <li><a href="/services/materials-supply/" className="hover:text-[#292524] transition-colors">Primary Mill TMT &amp; Grade-53 Cement</a></li>
             </ul>
           </div>
 
@@ -135,20 +151,20 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBrochure, onOpenEstimator 
             </h4>
             <div className="space-y-2.5 text-[12px]">
               <div>
-                <span className="font-semibold text-[#1d1d1f] block">Delhi NCR Hub:</span>
+                <span className="font-semibold text-[#1d1d1f] block"><a href="/locations/delhi-ncr/" className="hover:underline">Delhi NCR Hub:</a></span>
                 <span className="text-[#7a7a7a]">S8 2nd Floor Aaditya Mall, Indirapuram</span>
               </div>
               <div>
-                <span className="font-semibold text-[#1d1d1f] block">Bihar State Branch:</span>
+                <span className="font-semibold text-[#1d1d1f] block"><a href="/locations/patna-branch/" className="hover:underline">Bihar State Branch:</a></span>
                 <span className="text-[#7a7a7a]">Sanyukta Bhawan, Shivpuri, Patna</span>
               </div>
               <div>
-                <span className="font-semibold text-[#1d1d1f] block">West Champaran Operations:</span>
+                <span className="font-semibold text-[#1d1d1f] block"><a href="/locations/bettiah-branch/" className="hover:underline">West Champaran Operations:</a></span>
                 <span className="text-[#7a7a7a]">Basant Vihar, Hariwatika Chowk, Bettiah</span>
               </div>
               <div>
-                <span className="font-semibold text-[#1d1d1f] block">Assam Regional Hubs:</span>
-                <span className="text-[#7a7a7a]">Biswanath (Bedeti) & Jorhat</span>
+                <span className="font-semibold text-[#1d1d1f] block"><a href="/locations/assam-bedeti/" className="hover:underline">Assam Regional Hubs:</a></span>
+                <span className="text-[#7a7a7a]">Biswanath (Bedeti) &amp; Jorhat</span>
               </div>
             </div>
           </div>
@@ -159,6 +175,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBrochure, onOpenEstimator 
         <div className="pt-8 mt-12 border-t border-[#e7e5e4] flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-[#78716c]">
           <div>
             Copyright © {new Date().getFullYear()} Rudra Constructions &amp; Suppliers Pvt. Ltd. All rights reserved.
+            <a href="/admin" className="ml-2 text-[#a8a29e] hover:text-[#292524]">Admin</a>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <a
@@ -169,6 +186,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBrochure, onOpenEstimator 
             >
               XML Sitemap
             </a>
+            <span>•</span>
+            <a href="/sitemap.html" className="text-[#78716c] hover:text-[#0c0a09] transition-colors">HTML Sitemap</a>
+            <span>•</span>
+            <a href="/rss.xml" className="text-[#78716c] hover:text-[#0c0a09] transition-colors">RSS</a>
+            <span>•</span>
+            <a href="/llms.txt" className="text-[#78716c] hover:text-[#0c0a09] transition-colors">llms.txt</a>
             <span>•</span>
             <a
               href="/robots.txt"
