@@ -27,8 +27,7 @@ export const TrustMetrics: React.FC = () => {
                 index !== 0 ? 'sm:pl-4' : ''
               }`}
             >
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
+              <div className="mb-1.5">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[#777169] bg-[#f0efed] px-2 py-0.5 rounded-full border border-[#e7e5e4]">
                   {m.tag}
                 </span>

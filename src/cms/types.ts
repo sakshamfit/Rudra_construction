@@ -72,6 +72,12 @@ export interface EstimatorSettings {
   materials: EstimatorRate;
 }
 
+export interface CmsSaveInfo {
+  persisted: boolean;
+  storage: 'blob' | 'file';
+  error?: string;
+}
+
 export interface CmsPayload {
   photos: CmsPhoto[];
   blogs: CmsBlog[];
@@ -79,4 +85,10 @@ export interface CmsPayload {
   projects: CmsProject[];
   company: CompanySettings;
   estimator: EstimatorSettings;
+  /** Server-side timestamp of the last committed CMS write. */
+  updatedAt?: string;
+  /** Where the server keeps durable data: 'blob' (Vercel Blob) or 'file'. */
+  storage?: 'blob' | 'file';
+  /** Deployment host kind: 'vercel' (serverless) or 'node' (long-running server). */
+  host?: 'vercel' | 'node';
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Printer } from 'lucide-react';
 import { COMPANY_INFO, MISSION_VISION, SERVICES, CLIENTS, OFFICE_LOCATIONS } from '../data/companyData';
+import { useCms } from '../cms/CmsProvider';
 
 interface BrochureModalProps {
   isOpen: boolean;
@@ -8,7 +9,9 @@ interface BrochureModalProps {
 }
 
 export const BrochureModal: React.FC<BrochureModalProps> = ({ isOpen, onClose }) => {
+  const { company } = useCms();
   if (!isOpen) return null;
+  const turnover = company?.turnover || COMPANY_INFO.totalTurnover;
 
   const handlePrint = () => {
     window.print();
@@ -64,7 +67,7 @@ export const BrochureModal: React.FC<BrochureModalProps> = ({ isOpen, onClose })
             </div>
             <div className="text-right sm:border-l sm:border-[#e0e0e0] sm:pl-6 space-y-0.5">
               <div className="text-[12px] text-[#7a7a7a]">Total Audited Turnover</div>
-              <div className="text-[26px] font-semibold text-[#1d1d1f]">{COMPANY_INFO.totalTurnover}</div>
+              <div className="text-[26px] font-semibold text-[#1d1d1f]">{turnover}</div>
               <div className="text-[12px] text-[#7a7a7a]">Class-A Civil & Solar Contractor</div>
             </div>
           </div>

@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import type { CmsBlog, CmsPayload, CmsPhoto, CmsProject, CompanySettings, EstimatorSettings } from './types';
 import { PROJECTS as DEFAULT_PROJECTS } from '../data/companyData';
 import { COMPANY_INFO as DEFAULT_COMPANY } from '../data/companyData';
+import { mergeLocalOverlay, onLocalStateChange } from './localState';
 
 function defaultCompany(): CompanySettings {
   const firstStat = (DEFAULT_COMPANY.stats[0] as any) || {};
@@ -61,29 +62,52 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
   });
   const [loading, setLoading] = useState(true);
 
+  const applyServerPayload = useCallback((json: Partial<CmsPayload>) => {
+    // Merge with the browser mirror: on stateless hosts (Vercel without a
+    // Blob) a cold-started server would otherwise revert to seed data and
+    // admin edits would vanish after a refresh. The newer state wins.
+    const base: CmsPayload = {
+      photos: json.photos || [],
+      blogs: json.blogs || [],
+      slots: json.slots || {},
+      projects: (json as any).projects || [],
+      company: (json as any).company || defaultCompany(),
+      estimator: (json as any).estimator || defaultEstimator(),
+      updatedAt: (json as any).updatedAt,
+      storage: (json as any).storage,
+      host: (json as any).host,
+    };
+    const { payload } = mergeLocalOverlay(base);
+    setData(payload);
+  }, []);
+
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch('/api/public/cms', { credentials: 'include' });
+      const res = await fetch('/api/public/cms', { credentials: 'include', cache: 'no-store' });
       if (!res.ok) return;
       const json = (await res.json()) as Partial<CmsPayload>;
-      setData({
-        photos: json.photos || [],
-        blogs: json.blogs || [],
-        slots: json.slots || {},
-        projects: (json as any).projects || [],
-        company: (json as any).company || defaultCompany(),
-        estimator: (json as any).estimator || defaultEstimator(),
-      });
+      applyServerPayload(json);
     } catch {
       /* public site still works on bundled images */
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [applyServerPayload]);
 
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  // Live cross-tab sync: when the admin console saves (another tab), the
+  // browser fires `storage` here and we re-merge immediately — no refresh.
+  useEffect(() => onLocalStateChange(() => {
+    fetch('/api/public/cms', { credentials: 'include', cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => json && applyServerPayload(json))
+      .catch(() => {
+        /* keep current data */
+      });
+  }), [applyServerPayload]);
 
   const value = useMemo<CmsContextValue>(() => {
     const photoById = (id?: string | null) => data.photos.find((p) => p.id === id && p.visible);
