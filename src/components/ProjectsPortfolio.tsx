@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Calendar, CheckCircle2, ChevronRight, X, Activity, ShieldCheck, Sun } from 'lucide-react';
 import { PROJECTS } from '../data/companyData';
 import { ProjectItem } from '../types';
+import { useCms } from '../cms/CmsProvider';
 
 export const ProjectsPortfolio: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -16,6 +17,8 @@ export const ProjectsPortfolio: React.FC = () => {
     { id: 'infrastructure', label: 'Infrastructure' },
     { id: 'materials', label: 'Material Supply' }
   ];
+
+  const { resolveSlotUrl } = useCms();
 
   const filteredProjects = activeCategory === 'all'
     ? PROJECTS
@@ -74,7 +77,7 @@ export const ProjectsPortfolio: React.FC = () => {
                 {/* Image Container with Floating Overboard Tag */}
                 <div className="relative h-60 rounded-t-[19px] overflow-hidden bg-[#f0efed]">
                   <img
-                    src={project.image}
+                    src={resolveSlotUrl(`project-${project.id}`, project.image)}
                     alt={`${project.title} — ${project.location}, ${project.state} — ${project.client}`}
                     className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-600"
                     width={800}

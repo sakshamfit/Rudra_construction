@@ -10,6 +10,7 @@ import express from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createCmsMiddleware } from './server/cms.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -20,6 +21,8 @@ const HOST = process.env.HOST || '0.0.0.0';
 const app = express();
 app.disable('x-powered-by');
 app.set('trust proxy', true);
+
+app.use(createCmsMiddleware());
 
 app.use((req, res, next) => {
   const origin = `${req.protocol}://${req.get('host')}`;

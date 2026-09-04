@@ -108,6 +108,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBrochure, onOpenEstimator 
               <li><a href="#presence" className="hover:text-[#292524] transition-colors">Pan-India Reach</a></li>
               <li><a href="#clients" className="hover:text-[#292524] transition-colors">Clients</a></li>
               <li><a href="#estimator-section" className="hover:text-[#292524] transition-colors">Cost Estimator</a></li>
+              <li><a href="/#gallery" className="hover:text-[#292524] transition-colors">Gallery</a></li>
+              <li><a href="/blog" className="hover:text-[#292524] transition-colors">Journal</a></li>
               <li><a href="#faq" className="hover:text-[#292524] transition-colors">FAQs</a></li>
               <li><a href="#contact" className="hover:text-[#292524] transition-colors">RFP &amp; Tender</a></li>
             </ul>
@@ -173,6 +175,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBrochure, onOpenEstimator 
         <div className="pt-8 mt-12 border-t border-[#e7e5e4] flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-[#78716c]">
           <div>
             Copyright © {new Date().getFullYear()} Rudra Constructions &amp; Suppliers Pvt. Ltd. All rights reserved.
+            <a href="/admin" className="ml-2 text-[#a8a29e] hover:text-[#292524]">Admin</a>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <a

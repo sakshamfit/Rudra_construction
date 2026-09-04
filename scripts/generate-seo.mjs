@@ -1559,6 +1559,8 @@ GSTIN ${COMPANY.gstin} · CIN ${COMPANY.cin} · PAN ${COMPANY.pan} · MSME ${COM
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /admin
+Disallow: /admin/
 Disallow: /src/
 
 User-agent: Googlebot

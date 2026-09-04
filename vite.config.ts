@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import {defineConfig, type Plugin} from 'vite';
+import {createCmsMiddleware} from './server/cms.mjs';
 
 const brazilHeaders = {
   'Content-Language': 'pt-BR, en',
@@ -29,6 +30,7 @@ function injectOriginPlugin(): Plugin {
         res.setHeader(key, value);
       }
       const url = (req.url || '').split('?')[0];
+      if (url.startsWith('/api/')) return next();
       const injectExt = ['.xml', '.txt', '.json', '.html', '.webmanifest'];
       const should = injectExt.some((ext) => url.endsWith(ext)) || url.endsWith('/') || url === '/robots.txt';
       if (!should) return next();
@@ -72,9 +74,21 @@ function injectOriginPlugin(): Plugin {
   };
 }
 
+function cmsApiPlugin(): Plugin {
+  return {
+    name: 'cms-api',
+    configureServer(server) {
+      server.middlewares.use(createCmsMiddleware());
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(createCmsMiddleware());
+    },
+  };
+}
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), injectOriginPlugin()],
+    plugins: [cmsApiPlugin(), react(), tailwindcss(), injectOriginPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

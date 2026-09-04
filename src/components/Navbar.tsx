@@ -11,22 +11,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenEstimator, onOpenBrochure 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { name: 'Overview', href: '#overview' },
-    { name: 'Services', href: '#services' },
-    { name: 'Portfolio', href: '#portfolio' },
-    { name: 'Methodology', href: '#methodology' },
-    { name: 'Quality', href: '#quality' },
-    { name: 'Presence', href: '#presence' },
-    { name: 'Clients', href: '#clients' },
-    { name: 'FAQ', href: '#faq' },
-    { name: 'Contact', href: '#contact' }
+    { name: 'Overview', href: '/#overview' },
+    { name: 'Services', href: '/#services' },
+    { name: 'Portfolio', href: '/#portfolio' },
+    { name: 'Gallery', href: '/#gallery' },
+    { name: 'Journal', href: '/blog' },
+    { name: 'Quality', href: '/#quality' },
+    { name: 'Presence', href: '/#presence' },
+    { name: 'FAQ', href: '/#faq' },
+    { name: 'Contact', href: '/#contact' }
   ];
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#f5f5f5]/90 backdrop-blur-md border-b border-[#e7e5e4]">
       <div className="max-w-[1440px] w-full mx-auto h-[64px] flex items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Left: Brand Identity */}
-        <a href="#" className="flex items-center gap-2.5 text-[#0c0a09] hover:opacity-85 transition-opacity">
+        <a href="/" className="flex items-center gap-2.5 text-[#0c0a09] hover:opacity-85 transition-opacity">
           <div className="w-8 h-8 rounded-full bg-[#292524] text-white flex items-center justify-center font-serif text-sm font-light">
             RC
           </div>
@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenEstimator, onOpenBrochure 
         </a>
 
         {/* Center: Desktop Navigation links with natural spacing */}
-        <nav className="hidden lg:flex items-center gap-7 xl:gap-8" aria-label="Primary" itemScope itemType="https://schema.org/SiteNavigationElement">
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-7" aria-label="Primary" itemScope itemType="https://schema.org/SiteNavigationElement">
           {navLinks.map((link) => (
             <a
               key={link.name}

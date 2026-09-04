@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { COMPANY_INFO } from '../data/companyData';
 import heroImg from '../assets/images/rudra_hero_construction_1788465374495.jpg';
+import { useCms } from '../cms/CmsProvider';
 
 interface HeroProps {
   onOpenEstimator: () => void;
@@ -18,6 +19,9 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenEstimator, onOpenBrochure }) => {
+  const { resolveSlotUrl, slotPhoto } = useCms();
+  const heroSrc = resolveSlotUrl('hero', heroImg);
+  const heroMeta = slotPhoto('hero');
   return (
     <section className="relative overflow-hidden bg-[#f5f5f5] text-[#0c0a09] pt-12 pb-20 sm:pt-16 sm:pb-28 border-b border-[#e7e5e4]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -69,8 +73,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenEstimator, onOpenBrochure }) =
             
             {/* Real Civil Construction Photography */}
             <img
-              src={heroImg}
-              alt="Rudra Constructions - Civil Engineering & Infrastructure Precision — Panchayat Sarkar Bhawan and Class-A civil works in Bihar, India"
+              src={heroSrc}
+              alt={heroMeta?.alt || "Rudra Constructions - Civil Engineering & Infrastructure Precision — Panchayat Sarkar Bhawan and Class-A civil works in Bihar, India"}
               className="w-full h-[360px] sm:h-[480px] lg:h-[540px] object-cover object-center"
               width={1600}
               height={900}
