@@ -37,8 +37,11 @@ const UPLOAD_DIR = IS_SERVERLESS ? path.join(WRITABLE_ROOT, 'uploads') : path.jo
 const UPLOAD_URL_PREFIX = '/uploads';
 const COOKIE = 'rc_admin';
 // Vercel serverless functions hard-cap request bodies at ~4.5 MB, so uploads
-// through the function must stay below that. The Node server allows 12 MB.
-const MAX_BYTES = IS_SERVERLESS ? 4 * 1024 * 1024 : 12 * 1024 * 1024;
+// through the function must stay below that. The Node server allows 12 MB
+// files; since photos travel as base64 inside JSON (≈ 4/3 x inflation), the
+// decoded-byte cap on Node is 16 MB so a full 12 MB file still fits
+// (12 MB → ~16 MB base64 < the 16.5 MB readBody allowance below).
+const MAX_BYTES = IS_SERVERLESS ? 4 * 1024 * 1024 : 16 * 1024 * 1024;
 const MAX_BYTES_LABEL = IS_SERVERLESS ? '4 MB' : '12 MB';
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
@@ -347,7 +350,21 @@ function createStore() {
     }
     try {
       fileWriteJson(CMS_FILE, cms);
-      store.lastSave = { persisted: true, storage: store.mode };
+      if (IS_SERVERLESS) {
+        // Serverless without a connected blob: the write landed in /tmp,
+        // which is wiped on every cold start. Report that honestly so the
+        // admin console can warn instead of pretending the edit is durable
+        // (keep the blob-failure error when one was already recorded).
+        store.lastSave = {
+          persisted: false,
+          storage: 'file',
+          error:
+            store.lastSave?.error ||
+            'No cloud storage connected — edits live only in this server instance until it restarts. Connect Vercel Blob to persist them.',
+        };
+      } else {
+        store.lastSave = { persisted: true, storage: store.mode };
+      }
     } catch (e) {
       store.lastSave = { persisted: false, storage: store.mode, error: 'Local write failed' };
     }
@@ -527,7 +544,11 @@ function readBody(req) {
       req.on('data', (c) => {
         size += c.length;
         if (size > MAX_BYTES + 512 * 1024) {
-          reject(new Error('payload too large'));
+          reject(
+            new Error(
+              `Upload is too large for this server — images must be ${MAX_BYTES_LABEL} or smaller. Pick a smaller image; the admin console auto-optimizes large photos.`
+            )
+          );
           if (typeof req.destroy === 'function') req.destroy();
           return;
         }

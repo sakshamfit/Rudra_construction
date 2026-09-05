@@ -29,7 +29,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import type { CmsBlog, CmsPayload, CmsPhoto, CmsProject, CompanySettings, EstimatorSettings } from '../cms/types';
-import { fileToDataUrl } from '../cms/fileToDataUrl';
+import { prepareImageUpload, setUploadHost, formatBytes, RAW_FILE_LIMIT, STORAGE_TARGET_BYTES } from '../cms/fileToDataUrl';
 import { mergeLocalOverlay, toLocalPayload, writeLocalState } from '../cms/localState';
 import { PROJECTS as DEFAULT_PROJECTS } from '../data/companyData';
 import heroImg from '../assets/images/rudra_hero_construction_1788465374495.jpg';
@@ -60,7 +60,13 @@ async function api<T = unknown>(url: string, init?: RequestInit): Promise<T> {
     json = {};
   }
   if (!res.ok) {
-    const err = new Error((json as { error?: string }).error || `Request failed (${res.status})`) as Error & {
+    // Vercel returns a bare 413 when the request body exceeds the
+    // serverless ~4.5 MB cap — translate that into actionable guidance.
+    const message =
+      res.status === 413
+        ? 'This image is too large for the server to accept. The admin console auto-optimizes large photos before upload, so please try the photo again — or pick a smaller file.'
+        : (json as { error?: string }).error || `Request failed (${res.status})`;
+    const err = new Error(message) as Error & {
       status?: number;
     };
     err.status = res.status;
@@ -110,6 +116,9 @@ export function AdminApp() {
   const load = useCallback(async () => {
     try {
       const data = await api<CmsPayload>('/api/admin/cms');
+      // Tell the upload pipeline which host serves the API so it can size
+      // photos to fit that host's request-body cap (Vercel's is ~4.5 MB).
+      setUploadHost(data.host);
       // Merge with the browser mirror: on stateless hosts (Vercel serverless
       // without a Blob) a cold-started API would serve seed data and your
       // edits would look like they vanished after a refresh. Newer wins.
@@ -403,7 +412,7 @@ function PlacementsPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => P
     setMessage('');
     setError('');
     try {
-      const { data, mime, name } = await fileToDataUrl(file);
+      const { data, mime, name } = await prepareImageUpload(file);
       const cleanTitle = name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ') || `${slotKey} replacement photo`;
 
       // 1. Upload photo to library
@@ -611,38 +620,110 @@ function PlacementsPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => P
 /* =========================================================================
    2. PHOTOS PANEL — Photo Library & Field Photography
    ========================================================================= */
+interface PendingPhoto {
+  key: string;
+  file: File;
+  previewUrl: string;
+}
+
 function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promise<void> }) {
   const [editing, setEditing] = useState<CmsPhoto | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [drag, setDrag] = useState(false);
+  // Photos picked from the desktop, previewed at full quality and waiting for
+  // the owner's approval. Only approved photos get compressed + stored.
+  const [pending, setPending] = useState<PendingPhoto[]>([]);
 
-  const uploadFiles = async (files: FileList | File[]) => {
+  /** Stage picked files for preview — nothing is uploaded until approval. */
+  const addFiles = (files: FileList | File[]) => {
+    setError('');
+    setMessage('');
+    const list = Array.from(files);
+    const rejected: string[] = [];
+    const accepted: PendingPhoto[] = [];
+    for (const file of list) {
+      const okType = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type);
+      if (!okType || file.size > RAW_FILE_LIMIT) {
+        rejected.push(file.name || 'file');
+        continue;
+      }
+      accepted.push({
+        key: `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`,
+        file,
+        previewUrl: URL.createObjectURL(file),
+      });
+    }
+    if (accepted.length) setPending((p) => [...p, ...accepted]);
+    if (rejected.length) {
+      setError(
+        `Skipped ${rejected.length} file(s) — only JPEG, PNG, WebP or GIF up to ${formatBytes(RAW_FILE_LIMIT)}: ${rejected.join(', ')}`
+      );
+    }
+  };
+
+  const removePending = (key: string) => {
+    setPending((p) => {
+      const item = p.find((x) => x.key === key);
+      if (item) URL.revokeObjectURL(item.previewUrl);
+      return p.filter((x) => x.key !== key);
+    });
+  };
+
+  const clearPending = () => {
+    pending.forEach((p) => URL.revokeObjectURL(p.previewUrl));
+    setPending([]);
+  };
+
+  /**
+   * Approve & store: each photo is re-encoded to the smallest practical size
+   * (≈400 KB target, never larger than the original) and then uploaded.
+   */
+  const approvePhotos = async (items: PendingPhoto[]) => {
     setError('');
     setMessage('');
     setUploading(true);
+    let saved = 0;
+    let originalBytes = 0;
+    let storedBytes = 0;
+    const failedKeys: string[] = [];
     try {
-      const list = Array.from(files);
-      for (const file of list) {
-        const { data, mime, name } = await fileToDataUrl(file);
-        await api('/api/admin/photos', {
-          method: 'POST',
-          body: JSON.stringify({
-            data,
-            mime,
-            title: name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
-            alt: name,
-            section: 'gallery',
-            showInGallery: true,
-            visible: true,
-          }),
-        });
+      for (const item of items) {
+        try {
+          const prepared = await prepareImageUpload(item.file);
+          await api('/api/admin/photos', {
+            method: 'POST',
+            body: JSON.stringify({
+              data: prepared.data,
+              mime: prepared.mime,
+              title: prepared.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+              alt: prepared.name,
+              section: 'gallery',
+              showInGallery: true,
+              visible: true,
+            }),
+          });
+          saved += 1;
+          originalBytes += item.file.size;
+          storedBytes += prepared.bytes;
+          URL.revokeObjectURL(item.previewUrl);
+          setPending((p) => p.filter((x) => x.key !== item.key));
+        } catch (err) {
+          failedKeys.push(item.key);
+          setError(err instanceof Error ? err.message : 'Upload failed.');
+        }
       }
-      await onChange();
-      setMessage(list.length === 1 ? 'Photo added to library and website.' : `${list.length} photos added.`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Upload failed.');
+      if (saved > 0) {
+        await onChange();
+        const sizeNote =
+          originalBytes !== storedBytes
+            ? ` Compressed ${formatBytes(originalBytes)} → ${formatBytes(storedBytes)} for storage.`
+            : '';
+        setMessage(saved === 1 ? `Photo approved and saved to the website.${sizeNote}` : `${saved} photos approved and saved.${sizeNote}`);
+      } else if (failedKeys.length) {
+        setError((e) => e || 'Upload failed — the photo was not saved.');
+      }
     } finally {
       setUploading(false);
     }
@@ -653,13 +734,13 @@ function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promi
     setError('');
     setMessage('');
     try {
-      const { data, mime } = await fileToDataUrl(file);
+      const prepared = await prepareImageUpload(file);
       await api(`/api/admin/photos/${photoId}/replace`, {
         method: 'POST',
-        body: JSON.stringify({ data, mime }),
+        body: JSON.stringify({ data: prepared.data, mime: prepared.mime }),
       });
       await onChange();
-      setMessage('Photo file replaced successfully with new desktop upload!');
+      setMessage(`Photo replaced successfully — stored compressed at ${formatBytes(prepared.bytes)}.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Replace failed.');
     } finally {
@@ -682,7 +763,9 @@ function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promi
           <span>Photo Library & Field Photography</span>
         </h1>
         <p className="text-sm text-[#57534e] mt-1">
-          Upload new photographs from your desktop or replace any existing photo. Photos are featured across the site gallery, hero, portfolio, and blogs.
+          Upload new photographs from your desktop or replace any existing photo. Photos are previewed first —
+          when you approve them, they are compressed to the smallest possible size (typically a few hundred KB)
+          before being stored and published across the gallery, hero, portfolio and blogs.
         </p>
       </div>
 
@@ -696,7 +779,7 @@ function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promi
         onDrop={(e) => {
           e.preventDefault();
           setDrag(false);
-          if (e.dataTransfer.files?.length) uploadFiles(e.dataTransfer.files);
+          if (e.dataTransfer.files?.length) addFiles(e.dataTransfer.files);
         }}
         className={`block cursor-pointer rounded-[20px] border-2 border-dashed p-8 text-center transition-all ${
           drag ? 'border-[#292524] bg-stone-50' : 'border-[#d6d3d1] bg-white hover:border-[#292524]'
@@ -707,7 +790,8 @@ function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promi
           Upload Photos from Desktop
         </div>
         <div className="text-xs text-[#78716c] mt-1">
-          Drag & drop images here or click to choose from computer · JPEG, PNG, WebP or GIF · up to 12 MB each
+          Drag & drop images here or click to choose from computer · JPEG, PNG, WebP or GIF · up to 25 MB each
+          · you preview & approve before anything is stored
         </div>
         <input
           type="file"
@@ -715,16 +799,88 @@ function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promi
           multiple
           className="hidden"
           onChange={(e) => {
-            if (e.target.files?.length) uploadFiles(e.target.files);
+            if (e.target.files?.length) addFiles(e.target.files);
             e.target.value = '';
           }}
         />
       </label>
 
+      {/* Pending Approval Queue — preview at full quality, then approve to store compressed */}
+      {pending.length > 0 && (
+        <div className="bg-white border border-[#e7e5e4] rounded-[20px] p-5 space-y-4 shadow-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-[15px] font-medium text-[#0c0a09] flex items-center gap-2">
+                <Eye className="w-4 h-4 text-[#292524]" />
+                Review & Approve ({pending.length} photo{pending.length > 1 ? 's' : ''})
+              </h2>
+              <p className="text-xs text-[#78716c] mt-0.5">
+                These are full-quality previews. On approval each photo is compressed to the minimum size
+                (target ≈ 400 KB, never larger than the original) and then published.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => approvePhotos(pending)}
+                disabled={uploading}
+                className="apple-btn-active inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#292524] text-white text-[13px] font-medium shadow-sm hover:bg-[#0c0a09] disabled:opacity-50"
+              >
+                {uploading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                <span>{uploading ? 'Compressing & saving…' : `Approve & Save All (${pending.length})`}</span>
+              </button>
+              <button
+                onClick={clearPending}
+                disabled={uploading}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#e7e5e4] text-[13px] text-[#57534e] hover:bg-[#fafafa] disabled:opacity-50"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Discard</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {pending.map((item) => (
+              <div key={item.key} className="border border-[#e7e5e4] rounded-[16px] overflow-hidden bg-[#fafafa]">
+                <div className="h-40 bg-[#f0efed]">
+                  <img src={item.previewUrl} alt={item.file.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-3 space-y-2">
+                  <div className="text-[13px] font-medium text-[#0c0a09] truncate" title={item.file.name}>
+                    {item.file.name}
+                  </div>
+                  <div className="text-[11px] text-[#78716c] font-mono">
+                    Original size: {formatBytes(item.file.size)} · stored ≈ {formatBytes(Math.min(item.file.size, STORAGE_TARGET_BYTES))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => approvePhotos([item])}
+                      disabled={uploading}
+                      className="apple-btn-active inline-flex items-center gap-1 text-[12px] px-3 py-1.5 rounded-full bg-[#16a34a] text-white font-medium hover:bg-[#15803d] disabled:opacity-50"
+                    >
+                      <Check className="w-3 h-3" />
+                      <span>Approve & Save</span>
+                    </button>
+                    <button
+                      onClick={() => removePending(item.key)}
+                      disabled={uploading}
+                      className="inline-flex items-center gap-1 text-[12px] px-3 py-1.5 rounded-full border border-[#e7e5e4] text-[#57534e] hover:bg-[#f5f5f4] disabled:opacity-50"
+                    >
+                      <X className="w-3 h-3" />
+                      <span>Remove</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {uploading && (
         <div className="p-3.5 rounded-[14px] bg-[#f5f5f5] text-sm text-[#57534e] flex items-center gap-2">
           <RefreshCw className="w-4 h-4 animate-spin text-[#292524]" />
-          <span>Uploading images from desktop…</span>
+          <span>Compressing & saving approved photos…</span>
         </div>
       )}
       {message && (
@@ -876,7 +1032,7 @@ function PhotoModal({
     setBusy(true);
     setError('');
     try {
-      const { data, mime } = await fileToDataUrl(file);
+      const { data, mime } = await prepareImageUpload(file);
       await api(`/api/admin/photos/${photo.id}/replace`, {
         method: 'POST',
         body: JSON.stringify({ data, mime }),
@@ -1037,7 +1193,7 @@ function ProjectsPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Pro
     setBusyId(project.id);
     setMsg('');
     try {
-      const { data, mime, name } = await fileToDataUrl(file);
+      const { data, mime, name } = await prepareImageUpload(file);
       const cleanTitle = `${project.title} Site Photo`;
 
       // 1. Upload to CMS photos
@@ -1257,7 +1413,7 @@ function ProjectEditor({
     setUploadingImage(true);
     setErr('');
     try {
-      const { data, mime, name } = await fileToDataUrl(file);
+      const { data, mime, name } = await prepareImageUpload(file);
       const cleanTitle = draft.title ? `${draft.title} Image` : name;
       const res = await api<{ photo: CmsPhoto }>('/api/admin/photos', {
         method: 'POST',
@@ -1681,7 +1837,7 @@ function BlogEditor({
     setUploadingCover(true);
     setError('');
     try {
-      const { data, mime, name } = await fileToDataUrl(file);
+      const { data, mime, name } = await prepareImageUpload(file);
       const cleanTitle = draft.title ? `${draft.title} Cover` : name;
       const res = await api<{ photo: CmsPhoto }>('/api/admin/photos', {
         method: 'POST',
