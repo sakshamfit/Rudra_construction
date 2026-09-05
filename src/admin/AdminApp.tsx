@@ -59,7 +59,13 @@ async function api<T = unknown>(url: string, init?: RequestInit): Promise<T> {
   } catch {
     json = {};
   }
-  if (!res.ok) throw new Error((json as { error?: string }).error || `Request failed (${res.status})`);
+  if (!res.ok) {
+    const err = new Error((json as { error?: string }).error || `Request failed (${res.status})`) as Error & {
+      status?: number;
+    };
+    err.status = res.status;
+    throw err;
+  }
   return json as T;
 }
 
@@ -72,6 +78,7 @@ export function AdminApp() {
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
   const [bootError, setBootError] = useState('');
+  const [sessionNotice, setSessionNotice] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -121,7 +128,18 @@ export function AdminApp() {
       return true;
     } catch (e) {
       console.error(e);
-      setBootError(e instanceof Error ? e.message : 'Could not load admin data.');
+      const status = (e as Error & { status?: number }).status;
+      if (status === 401) {
+        // The session is no longer valid (expired, password changed, or a
+        // server backend lost its session state). Drop back to the login
+        // screen instead of showing the "backend unavailable" banner —
+        // signing in again fixes it immediately.
+        setBootError('');
+        setAuthed(false);
+        setSessionNotice(true);
+      } else {
+        setBootError(e instanceof Error ? e.message : 'Could not load admin data.');
+      }
       return false;
     }
   }, []);
@@ -149,9 +167,9 @@ export function AdminApp() {
     try {
       await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ password }) });
       setPassword('');
+      setSessionNotice(false);
       setAuthed(true);
-      const ok = await load();
-      if (!ok) setAuthed(true);
+      await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not sign in.');
     } finally {
@@ -220,6 +238,13 @@ export function AdminApp() {
               </button>
             </div>
           </div>
+
+          {sessionNotice && !error && (
+            <div className="p-3 rounded-[12px] bg-[#fffbeb] border border-[#fde68a] text-sm text-[#92400e] flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>Your session has expired. Please sign in again to continue managing the site.</span>
+            </div>
+          )}
 
           {error && (
             <div className="p-3 rounded-[12px] bg-[#fef2f2] border border-[#fecaca] text-sm text-[#dc2626] flex items-center gap-2">

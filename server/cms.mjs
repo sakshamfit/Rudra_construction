@@ -58,6 +58,75 @@ const HOST_NAME = process.env.VERCEL ? 'vercel' : 'node';
 
 const loginHits = new Map();
 
+/* -------------------------------------------------------------------------- */
+/* Stateless signed session tokens                                             */
+/* -------------------------------------------------------------------------- */
+// Sessions used to live ONLY in a JSON store (data/sessions.json on Node,
+// /tmp or the blob on Vercel). On serverless that store is per-instance and
+// wiped on cold starts, so a successful login was often followed by
+// "Sign in required." on the very next request — it landed on another
+// instance (this showed up in the admin console as "Couldn't load live site
+// data"). Tokens are now self-contained and HMAC-signed, so ANY instance can
+// verify them with no shared storage:
+//
+//     <base64url payload>.<base64url HMAC-SHA256(payload, secret)>
+//
+// payload: { v: 1, exp: <ms epoch>, pf: <admin passwordHash fingerprint> }
+//  - exp  → 7-day expiry, checked without any store lookup
+//  - pf   → fingerprint of the current admin passwordHash, so changing the
+//           password instantly invalidates every outstanding session, even
+//           ones issued by other instances
+// The legacy server-side session store is still honoured for cookies issued
+// before this change, so nobody is logged out mid-session after deploying.
+const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+// Stable across instances/redeploys: explicit secret → env password → the
+// stored passwordHash (bundled seed / blob) → the built-in default password.
+function sessionSecretFor(passwordHash) {
+  const source =
+    process.env.SESSION_SECRET ||
+    process.env.ADMIN_SESSION_SECRET ||
+    process.env.ADMIN_PASSWORD ||
+    (passwordHash || '').trim() ||
+    'RudraAdmin@2025';
+  return crypto.createHash('sha256').update(`rc-session:${source}`).digest();
+}
+
+function passwordFingerprint(passwordHash) {
+  return crypto.createHash('sha256').update(String(passwordHash || '')).digest('hex').slice(0, 16);
+}
+
+function signSessionToken(payload, secret) {
+  const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const sig = crypto.createHmac('sha256', secret).update(body).digest('base64url');
+  return `${body}.${sig}`;
+}
+
+function verifySessionToken(token, secret, passwordHash) {
+  if (!token || typeof token !== 'string') return null;
+  const dot = token.indexOf('.');
+  if (dot <= 0 || dot === token.length - 1) return null;
+  const body = token.slice(0, dot);
+  const given = token.slice(dot + 1);
+  const expected = crypto.createHmac('sha256', secret).update(body).digest();
+  let givenBuf;
+  try {
+    givenBuf = Buffer.from(given, 'base64url');
+  } catch {
+    return null;
+  }
+  if (givenBuf.length !== expected.length || !crypto.timingSafeEqual(givenBuf, expected)) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+    if (!payload || payload.v !== 1) return null;
+    if (typeof payload.exp !== 'number' || payload.exp < Date.now()) return null;
+    if (!payload.pf || payload.pf !== passwordFingerprint(passwordHash)) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
 function ensureDirs() {
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -478,9 +547,16 @@ async function readJson(req) {
   return JSON.parse(raw);
 }
 
-function currentUser(req, store) {
+function currentUser(req, store, secret, passwordHash) {
   const token = parseCookies(req)[COOKIE];
   if (!token) return null;
+  // Self-contained signed token — verifiable by any instance, survives cold
+  // starts, restarts and redeploys without any shared session storage.
+  const payload = verifySessionToken(token, secret, passwordHash);
+  if (payload) return { token, expiresAt: payload.exp, stateless: true };
+  // Legacy fallback: cookie issued before signed tokens existed — looked up
+  // in the session store. These expire naturally; new logins no longer write
+  // to the store.
   const sessions = store.sessionsCache;
   const sess = sessions && sessions[token];
   if (!sess || sess.expiresAt < Date.now()) {
@@ -489,8 +565,8 @@ function currentUser(req, store) {
   return { token, ...sess };
 }
 
-function requireAdmin(req, res, store) {
-  const user = currentUser(req, store);
+function requireAdmin(req, res, store, secret, passwordHash) {
+  const user = currentUser(req, store, secret, passwordHash);
   if (!user) {
     send(res, 401, { error: 'Sign in required.' });
     return null;
@@ -657,6 +733,9 @@ export function createCmsMiddleware() {
       let cms = await ensurePassword(await store.readCms(), store);
 
       const payloadMeta = { updatedAt: cms.updatedAt, storage: store.mode, host: HOST_NAME };
+      // Stable across instances and cold starts — see "Stateless signed
+      // session tokens" above.
+      const sessionSecret = sessionSecretFor(cms.settings?.passwordHash);
 
       // PUBLIC ENDPOINTS
       if (method === 'GET' && url === '/api/public/cms') {
@@ -695,10 +774,17 @@ export function createCmsMiddleware() {
         if (!valid) {
           return send(res, 401, { error: 'Incorrect password.' });
         }
-        const token = crypto.randomBytes(24).toString('hex');
-        const sessions = sessionsCache;
-        sessions[token] = { createdAt: Date.now(), expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000 };
-        await store.writeSessions(sessions);
+        // Signed, self-contained token: every instance can verify it without
+        // a shared session store, so login → next request can never hit a
+        // "Sign in required." on a different serverless instance / cold start.
+        const token = signSessionToken(
+          {
+            v: 1,
+            exp: Date.now() + SESSION_TTL_MS,
+            pf: passwordFingerprint(cms.settings.passwordHash),
+          },
+          sessionSecret
+        );
         setSessionCookie(res, token);
         return send(res, 200, { ok: true, storage: store.mode, host: HOST_NAME });
       }
@@ -715,11 +801,11 @@ export function createCmsMiddleware() {
       }
 
       if (method === 'GET' && url === '/api/auth/me') {
-        const user = currentUser(req, store);
+        const user = currentUser(req, store, sessionSecret, cms.settings?.passwordHash);
         return send(res, 200, { authenticated: !!user, storage: store.mode, host: HOST_NAME });
       }
 
-      if (!requireAdmin(req, res, store)) return;
+      if (!requireAdmin(req, res, store, sessionSecret, cms.settings?.passwordHash)) return;
 
       // ADMIN ENDPOINTS
       if (method === 'POST' && url === '/api/auth/password') {
@@ -731,6 +817,14 @@ export function createCmsMiddleware() {
         if (nextPwd.length < 8) return send(res, 400, { error: 'New password must be at least 8 characters.' });
         cms.settings.passwordHash = hashPassword(nextPwd);
         await store.writeCms(cms);
+        // Signed sessions carry a fingerprint of the (old) passwordHash, so
+        // they are now invalid by construction. Also wipe legacy store-based
+        // sessions so old cookies cannot linger anywhere.
+        try {
+          await store.writeSessions({});
+        } catch {
+          /* best effort */
+        }
         return send(res, 200, { ok: true, save: store.lastSave, ...payloadMeta, updatedAt: cms.updatedAt });
       }
 
@@ -1048,3 +1142,6 @@ export function createCmsMiddleware() {
     }
   };
 }
+
+// Exported for session/auth tests (test/session-mode.mjs) — pure helpers.
+export { sessionSecretFor, passwordFingerprint, signSessionToken, verifySessionToken, SESSION_TTL_MS };
