@@ -2317,7 +2317,7 @@ function EstimatorPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Pr
 }
 
 /* =========================================================================
-   7. SETTINGS PANEL — Security & Password
+   7. SETTINGS PANEL — Security, Password & Cloud Storage Status
    ========================================================================= */
 function SettingsPanel() {
   const [currentPassword, setCurrent] = useState('');
@@ -2325,6 +2325,11 @@ function SettingsPanel() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+
+  // Cloud Storage Status
+  const [storageLoading, setStorageLoading] = useState(false);
+  const [storageResult, setStorageResult] = useState<any>(null);
+  const [storageError, setStorageError] = useState('');
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -2346,53 +2351,187 @@ function SettingsPanel() {
     }
   };
 
+  const runStorageTest = async () => {
+    setStorageLoading(true);
+    setStorageError('');
+    setStorageResult(null);
+    try {
+      const res = await api<any>('/api/admin/storage-test', { method: 'GET' });
+      setStorageResult(res);
+    } catch (err) {
+      setStorageError(err instanceof Error ? err.message : 'Storage test failed');
+    } finally {
+      setStorageLoading(false);
+    }
+  };
+
   return (
-    <form onSubmit={save} className="max-w-md bg-white border border-[#e7e5e4] rounded-[20px] p-6 space-y-4 shadow-xs">
-      <div className="flex items-center gap-2">
-        <ShieldCheck className="w-5 h-5 text-[#292524]" />
-        <h1 className="text-2xl font-medium tracking-tight text-[#0c0a09]">Console Security</h1>
+    <div className="space-y-6 max-w-3xl">
+      {/* Cloud Storage Status Card */}
+      <div className="bg-white border border-[#e7e5e4] rounded-[20px] p-6 space-y-4 shadow-xs">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-[#f5f5f4] grid place-items-center">
+            <Building2 className="w-4 h-4 text-[#292524]" />
+          </div>
+          <div>
+            <h2 className="text-[16px] font-medium tracking-tight text-[#0c0a09]">Cloud Storage Status</h2>
+            <p className="text-[11px] text-[#78716c] uppercase tracking-wider font-semibold">Vercel Blob — durable persistence for serverless</p>
+          </div>
+          {storageResult && (
+            <span
+              className={`ml-auto text-[11px] px-2.5 py-1 rounded-full font-mono uppercase tracking-wider border ${
+                storageResult.healthy
+                  ? 'bg-[#f0fdf4] text-[#15803d] border-[#bbf7d0]'
+                  : 'bg-[#fef2f2] text-[#b91c1c] border-[#fecaca]'
+              }`}
+            >
+              {storageResult.healthy ? '● Healthy' : '● Not Healthy'}
+            </span>
+          )}
+        </div>
+
+        <p className="text-sm text-[#57534e] leading-relaxed">
+          Your photos <strong>did upload</strong> before but vanished after refresh because the old code used a hand-rolled REST client
+          that doesn't match the real Vercel Blob protocol. This build uses the official <code className="px-1 py-0.5 bg-[#f5f5f4] rounded text-[12px]">@vercel/blob</code> SDK
+          with secret-namespaced keys (so <code className="px-1 py-0.5 bg-[#f5f5f4] rounded text-[12px]">cms.json</code> is not guessable) and bounded timeouts.
+          Click the button below to run a real write→read→delete against your Blob store.
+        </p>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={runStorageTest}
+            disabled={storageLoading}
+            className="apple-btn-active inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#292524] text-white text-[13px] font-medium shadow-sm hover:bg-[#0c0a09] disabled:opacity-50"
+          >
+            {storageLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+            <span>{storageLoading ? 'Testing cloud storage…' : 'Test cloud storage now'}</span>
+          </button>
+          <span className="text-[11px] text-[#a8a29e] font-mono">
+            {storageResult ? `mode: ${storageResult.mode} · host: ${storageResult.host} · prefix: ${storageResult.blobPrefix}` : 'no test yet'}
+          </span>
+        </div>
+
+        {storageError && (
+          <div className="p-3.5 rounded-[14px] bg-[#fef2f2] border border-[#fecaca] text-sm text-[#dc2626] flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <span>{storageError}</span>
+          </div>
+        )}
+
+        {storageResult && (
+          <div className="space-y-3 pt-2">
+            <div className="grid gap-2">
+              {storageResult.checks?.map((c: any, i: number) => (
+                <div
+                  key={i}
+                  className={`p-3 rounded-[12px] border text-[13px] flex items-start gap-2.5 ${
+                    c.ok ? 'bg-[#f0fdf4] border-[#bbf7d0] text-[#166534]' : 'bg-[#fef2f2] border-[#fecaca] text-[#7f1d1d]'
+                  }`}
+                >
+                  <span className={`mt-0.5 ${c.ok ? 'text-[#16a34a]' : 'text-[#dc2626]'}`}>
+                    {c.ok ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium flex items-center gap-2">
+                      <span>{c.name}</span>
+                      {c.ms != null && <span className="text-[11px] font-mono opacity-70">{c.ms}ms</span>}
+                      {c.status != null && <span className="text-[11px] font-mono opacity-70">HTTP {c.status}</span>}
+                    </div>
+                    {c.detail && <div className="text-[12px] opacity-80 mt-0.5 break-words">{c.detail}</div>}
+                    {c.error && <div className="text-[12px] mt-1 font-mono break-words">Error: {c.error}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {storageResult.guidance && (
+              <div
+                className={`p-3.5 rounded-[14px] border text-[13px] leading-relaxed ${
+                  storageResult.healthy ? 'bg-[#fafafa] border-[#e7e5e4] text-[#57534e]' : 'bg-[#fffbeb] border-[#fde68a] text-[#92400e]'
+                }`}
+              >
+                <div className="font-medium mb-1">{storageResult.healthy ? 'Setup guidance' : 'How to fix'}</div>
+                <div>{storageResult.guidance}</div>
+                {!storageResult.healthy && (
+                  <ul className="list-disc pl-5 mt-2 space-y-1 text-[12px]">
+                    <li>
+                      In Vercel dashboard → <strong>Storage → your Blob store → Settings</strong> → ensure it is connected to{' '}
+                      <strong>Production</strong> environment.
+                    </li>
+                    <li>
+                      Redeploy after connecting — Vercel injects <code className="px-1 bg-white rounded">BLOB_READ_WRITE_TOKEN</code> only on new deployments.
+                    </li>
+                    <li>
+                      Check <code className="px-1 bg-white rounded">BLOB_READ_WRITE_TOKEN</code> is present in Production env (Vercel → Settings → Environment Variables).
+                    </li>
+                    <li>If using OIDC, set <code className="px-1 bg-white rounded">BLOB_STORE_ID</code> as well.</li>
+                  </ul>
+                )}
+              </div>
+            )}
+
+            <div className="text-[11px] font-mono text-[#a8a29e] break-all">
+              Example key: {storageResult.exampleKey} {storageResult.secretNamespaced ? '(secret-namespaced, not guessable)' : '(not namespaced)'}
+            </div>
+          </div>
+        )}
+
+        <div className="pt-3 border-t border-[#f5f5f4] text-[11px] text-[#78716c] leading-relaxed">
+          <strong>What this fixes:</strong> Previously every cloud write was silently rejected (wrong REST endpoint) and stayed in serverless{' '}
+          <code className="px-1 py-0.5 bg-[#f5f5f4] rounded">/tmp</code> which is wiped on each cold start. Now writes use the official SDK with
+          Bearer auth and per-store hosts, with timeouts so an unreachable store degrades to local fallback instead of hanging.
+        </div>
       </div>
-      <p className="text-sm text-[#57534e]">
-        Change the password used to sign in to this admin console.
-      </p>
 
-      <label className="block text-[12px] font-semibold uppercase tracking-wider text-[#78716c]">
-        Current password
-        <input
-          type="password"
-          required
-          value={currentPassword}
-          onChange={(e) => setCurrent(e.target.value)}
-          className="mt-1 w-full p-2.5 rounded-[12px] border border-[#e7e5e4] bg-[#fafafa] text-[14px] font-medium normal-case tracking-normal"
-        />
-      </label>
+      {/* Password Security Form */}
+      <form onSubmit={save} className="bg-white border border-[#e7e5e4] rounded-[20px] p-6 space-y-4 shadow-xs">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-5 h-5 text-[#292524]" />
+          <h1 className="text-[16px] font-medium tracking-tight text-[#0c0a09]">Console Security</h1>
+        </div>
+        <p className="text-sm text-[#57534e]">Change the password used to sign in to this admin console.</p>
 
-      <label className="block text-[12px] font-semibold uppercase tracking-wider text-[#78716c]">
-        New password (min 8 characters)
-        <input
-          type="password"
-          required
-          minLength={8}
-          value={newPassword}
-          onChange={(e) => setNew(e.target.value)}
-          className="mt-1 w-full p-2.5 rounded-[12px] border border-[#e7e5e4] bg-[#fafafa] text-[14px] font-medium normal-case tracking-normal"
-        />
-      </label>
+        <label className="block text-[12px] font-semibold uppercase tracking-wider text-[#78716c]">
+          Current password
+          <input
+            type="password"
+            required
+            value={currentPassword}
+            onChange={(e) => setCurrent(e.target.value)}
+            className="mt-1 w-full p-2.5 rounded-[12px] border border-[#e7e5e4] bg-[#fafafa] text-[14px] font-medium normal-case tracking-normal"
+          />
+        </label>
 
-      {error && <p className="text-sm text-[#dc2626]">{error}</p>}
-      {message && <p className="text-sm text-[#16a34a]">{message}</p>}
+        <label className="block text-[12px] font-semibold uppercase tracking-wider text-[#78716c]">
+          New password (min 8 characters)
+          <input
+            type="password"
+            required
+            minLength={8}
+            value={newPassword}
+            onChange={(e) => setNew(e.target.value)}
+            className="mt-1 w-full p-2.5 rounded-[12px] border border-[#e7e5e4] bg-[#fafafa] text-[14px] font-medium normal-case tracking-normal"
+          />
+        </label>
 
-      <button
-        type="submit"
-        disabled={busy}
-        className="apple-btn-active px-5 py-2.5 rounded-full bg-[#292524] text-white text-[13px] font-medium shadow-sm hover:bg-[#0c0a09]"
-      >
-        {busy ? 'Updating…' : 'Update Password'}
-      </button>
+        {error && <p className="text-sm text-[#dc2626]">{error}</p>}
+        {message && <p className="text-sm text-[#16a34a]">{message}</p>}
 
-      <div className="pt-4 border-t border-[#e7e5e4] text-[11px] text-[#78716c] leading-relaxed">
-        Indian SEO Deployment: Content-Language en-IN, hi-IN · Geo IN-BR · Timezone Asia/Kolkata
-      </div>
-    </form>
+        <button
+          type="submit"
+          disabled={busy}
+          className="apple-btn-active px-5 py-2.5 rounded-full bg-[#292524] text-white text-[13px] font-medium shadow-sm hover:bg-[#0c0a09]"
+        >
+          {busy ? 'Updating…' : 'Update Password'}
+        </button>
+
+        <div className="pt-4 border-t border-[#e7e5e4] text-[11px] text-[#78716c] leading-relaxed">
+          Indian SEO Deployment: Content-Language en-IN, hi-IN · Geo IN-BR · Timezone Asia/Kolkata
+          <br />
+          Blob SDK: <code className="px-1 bg-[#f5f5f4] rounded">@vercel/blob</code> with secret namespacing and bounded timeouts.
+        </div>
+      </form>
+    </div>
   );
 }
+
