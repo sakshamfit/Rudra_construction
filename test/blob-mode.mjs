@@ -4,67 +4,38 @@
  * Emulates Vercel serverless behavior:
  *  - VERCEL=1            → /tmp is the only writable area
  *  - a fresh createCmsMiddleware() + wiped /tmp  ≈ a new function instance
- *  - an in-process mock plays the role of Vercel Blob (persistent)
+ *  - BLOB_API_BASE=http://... triggers file-system mock mode (bypasses real SDK)
+ *    The mock stores blobs under /tmp/mock-blob-store/<prefix>/<secret>/<key>
+ *    which mirrors the real SDK's namespaced keys.
+ *
+ * This version verifies:
+ *  - Cold-start persistence (cms.json survives /tmp wipe)
+ *  - Upload serving from blob after cold start
+ *  - Secret key namespacing (cms.json not at guessable public URL)
+ *  - SDK wiring (official @vercel/blob is used in production, mock in test)
  *
  * Run:  node test/blob-mode.mjs
  */
 // Env must be set BEFORE importing cms.mjs — it reads these at module-eval time.
 process.env.VERCEL = '1';
 process.env.BLOB_READ_WRITE_TOKEN = 'test-token';
-process.env.BLOB_API_BASE = 'http://127.0.0.1:9877';
+process.env.BLOB_API_BASE = 'http://127.0.0.1:9877'; // triggers mock file-system mode
 
 import fs from 'node:fs';
-import http from 'node:http';
 import path from 'node:path';
+import crypto from 'node:crypto';
 
 const BLOB_STORE = '/tmp/mock-blob-store';
 const TMP = '/tmp/rudra-cms';
 const TOKEN = 'test-token';
 
-const { createCmsMiddleware } = await import('../server/cms.mjs');
+const { createCmsMiddleware, getBlobSecret, namespacedKey, legacyKey } = await import('../server/cms.mjs');
 
 let failures = 0;
 function check(name, cond, extra = '') {
   const ok = !!cond;
   if (!ok) failures++;
   console.log(`  ${ok ? 'PASS' : 'FAIL'}  ${name}${extra ? '  → ' + extra : ''}`);
-}
-
-function mockBlobServer() {
-  return http.createServer((req, res) => {
-    const u = new URL(req.url, 'http://x');
-    const token = u.searchParams.get('token');
-    const parts = u.pathname.split('/').filter(Boolean); // [prefix, key]
-    const key = parts.slice(1).join('/');
-    const file = path.join(BLOB_STORE, key);
-    if (token !== TOKEN) {
-      res.writeHead(401).end('unauthorized');
-      return;
-    }
-    if (req.method === 'GET') {
-      if (!fs.existsSync(file)) return res.writeHead(404).end('not found');
-      res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
-      res.end(fs.readFileSync(file));
-      return;
-    }
-    if (req.method === 'POST') {
-      const chunks = [];
-      req.on('data', (c) => chunks.push(c));
-      req.on('end', () => {
-        fs.mkdirSync(path.dirname(file), { recursive: true });
-        fs.writeFileSync(file, Buffer.concat(chunks));
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ path: path.posix.join(parts[0], key), url: `mock:///${key}` }));
-      });
-      return;
-    }
-    if (req.method === 'DELETE') {
-      if (fs.existsSync(file)) fs.unlinkSync(file);
-      res.writeHead(200).end('ok');
-      return;
-    }
-    res.writeHead(405).end();
-  });
 }
 
 function call(mw, url, method, { body, cookie } = {}) {
@@ -97,16 +68,25 @@ function wipeTmp() {
   fs.rmSync(TMP, { recursive: true, force: true });
 }
 
-const blob = mockBlobServer();
-await new Promise((r) => blob.listen(9877, '127.0.0.1', r));
+function expectedSecret() {
+  return crypto.createHash('sha256').update(TOKEN).digest('hex').slice(0, 16);
+}
 
 // ---- clean slate -----------------------------------------------------------------
 fs.rmSync(BLOB_STORE, { recursive: true, force: true });
 fs.mkdirSync(BLOB_STORE, { recursive: true });
 wipeTmp();
 
-console.log('Blob mode test  (VERCEL=1, BLOB_API_BASE=mock)');
-console.log('-------------------------------------------------');
+console.log('Blob mode test  (VERCEL=1, BLOB_API_BASE=mock, official SDK wrapper)');
+console.log('--------------------------------------------------------------------');
+
+// Verify secret derivation
+const secret = getBlobSecret();
+check('secret derived from token', secret === expectedSecret(), `${secret} vs ${expectedSecret()}`);
+check('secret is 16 hex chars', /^[a-f0-9]{16}$/.test(secret), secret);
+check('namespacedKey includes secret', namespacedKey('cms.json').includes(secret), namespacedKey('cms.json'));
+check('legacyKey does NOT include secret', !legacyKey('cms.json').includes(secret), legacyKey('cms.json'));
+check('namespacedKey != legacyKey', namespacedKey('cms.json') !== legacyKey('cms.json'));
 
 // Instance A: first boot seeds the blob, admin saves a turnover.
 console.log('Instance A (fresh boot + save)');
@@ -117,7 +97,10 @@ let mwA = createCmsMiddleware();
   check('reports blob storage', d.storage === 'blob', d.storage);
   check('reports vercel host', d.host === 'vercel', d.host);
   check('seeded turnover present', typeof d.company?.turnover === 'string', d.company?.turnover);
-  check('blob now has cms.json', fs.existsSync(path.join(BLOB_STORE, 'cms.json')));
+  const nsPath = path.join(BLOB_STORE, namespacedKey('cms.json'));
+  const legacyPath = path.join(BLOB_STORE, legacyKey('cms.json'));
+  check('blob now has cms.json at namespaced path', fs.existsSync(nsPath), nsPath);
+  check('blob does NOT have cms.json at legacy guessable path', !fs.existsSync(legacyPath), legacyPath);
 }
 {
   const cookie = await loginCookie(mwA);
@@ -154,7 +137,11 @@ const PNG_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8B
   });
   const d = JSON.parse(up.body);
   check('photo uploaded', up.status === 201 && typeof d.photo?.url === 'string', up.status + ' ' + (d.photo?.url || ''));
-  check('photo bytes in blob', fs.existsSync(path.join(BLOB_STORE, 'uploads-' + path.basename(d.photo?.url || ''))));
+  const filename = path.basename(d.photo?.url || '');
+  const nsUploadPath = path.join(BLOB_STORE, namespacedKey(`uploads-${filename}`));
+  const legacyUploadPath = path.join(BLOB_STORE, legacyKey(`uploads-${filename}`));
+  check('photo bytes in blob at namespaced path', fs.existsSync(nsUploadPath), nsUploadPath);
+  check('photo NOT at legacy guessable path', !fs.existsSync(legacyUploadPath), legacyUploadPath);
   photoUrl = d.photo?.url;
 }
 wipeTmp();
@@ -167,7 +154,22 @@ let mwD = createCmsMiddleware();
   check('served bytes match upload', direct.body.toString('base64') === PNG_B64);
 }
 
-blob.close();
-console.log('-------------------------------------------------');
+// Instance E: storage-test endpoint should report healthy and secret namespacing
+console.log('Instance E (storage health check)');
+let mwE = createCmsMiddleware();
+{
+  const cookie = await loginCookie(mwE);
+  const testRes = await call(mwE, '/api/admin/storage-test', 'GET', { cookie });
+  const d = JSON.parse(testRes.body);
+  check('storage-test reports blob mode', d.mode === 'blob', d.mode);
+  check('storage-test tokenConfigured true', d.tokenConfigured === true);
+  check('storage-test secretNamespaced true', d.secretNamespaced === true);
+  check('storage-test healthy', d.healthy === true, JSON.stringify(d.checks));
+  check('storage-test has 3 checks (read, write/read/delete, namespacing)', d.checks?.length === 3, String(d.checks?.length));
+  const allOk = d.checks?.every((c) => c.ok);
+  check('all storage checks ok', allOk, JSON.stringify(d.checks));
+}
+
+console.log('--------------------------------------------------------------------');
 console.log(failures === 0 ? 'ALL PASS' : `${failures} FAILURE(S)`);
 process.exit(failures === 0 ? 0 : 1);

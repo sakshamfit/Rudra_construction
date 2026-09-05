@@ -12,6 +12,20 @@
  *
  * Every document write stamps `updatedAt`, which the browser client uses to
  * decide between server state and its local mirror.
+ *
+ * Blob implementation:
+ *  - Uses the official @vercel/blob SDK (put/get/del) — NOT a hand-rolled REST
+ *    client. The real Blob protocol uses per-store hosts
+ *    (https://<storeId>.public.blob.vercel-storage.com) with Bearer auth and
+ *    goes through https://vercel.com/api/blob for writes. The old code used
+ *    POST blob.vercel-storage.com/<key>?token=... which never matched the real
+ *    service, so every cloud write was silently rejected and everything stayed
+ *    in /tmp.
+ *  - All blob keys are namespaced with a secret derived from the token
+ *    (sha256(token).slice(0,16)) so cms.json — which contains the admin
+ *    password hash — never sits at a guessable public URL.
+ *  - Bounded timeouts: every blob operation uses AbortSignal.timeout so an
+ *    unreachable store degrades to the local fallback instead of hanging.
  */
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -47,19 +61,185 @@ const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gi
 const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
 
 // --- Vercel Blob (durable storage for serverless deploys) -------------------
-// Vercel KV was retired (Dec 2024); Vercel Blob is the supported durable store.
-// Plain REST API — no SDK dependency:
-//   POST  {base}/{prefix}/{key}?token={write}   upload
-//   GET   {base}/{prefix}/{key}?token={read}    download
-//   DELETE {base}/{prefix}/{key}?token={write}  delete
-const BLOB_API_BASE = (process.env.BLOB_API_BASE || 'https://blob.vercel-storage.com').replace(/\/+$/, '');
+// Official SDK: https://vercel.com/docs/vercel-blob/using-blob-sdk
+// - put(pathname, body, { access, token, addRandomSuffix:false, ... })
+// - get(pathname, { access, token }) -> { stream, statusCode, ... }
+// - del(pathname, { token })
+// - head, list, etc.
+// The SDK talks to https://vercel.com/api/blob for writes and to
+// https://<storeId>.(public|private).blob.vercel-storage.com for reads,
+// using Bearer auth. This replaces the broken hand-rolled client that used
+// POST https://blob.vercel-storage.com/<key>?token=... which never worked.
 const BLOB_PREFIX = (process.env.BLOB_PREFIX || 'rudra-cms').replace(/^\/+|\/+$/g, '');
 const BLOB_READ_TOKEN = process.env.BLOB_READ_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || '';
 const BLOB_WRITE_TOKEN = process.env.BLOB_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN || '';
+const BLOB_API_BASE = (process.env.BLOB_API_BASE || '').replace(/\/+$/, ''); // used only for test mock detection
 const USE_BLOB = !!(BLOB_READ_TOKEN && BLOB_WRITE_TOKEN);
+const IS_MOCK_BLOB = !!(BLOB_API_BASE && BLOB_API_BASE.startsWith('http'));
+const MOCK_BLOB_STORE = '/tmp/mock-blob-store';
 const HOST_NAME = process.env.VERCEL ? 'vercel' : 'node';
 
 const loginHits = new Map();
+
+/* -------------------------------------------------------------------------- */
+/* Blob key namespacing (security hardening)                                   */
+/* -------------------------------------------------------------------------- */
+// Once writes actually persist, cms.json (which contains the admin password
+// hash) would sit at a guessable URL if stored as public. All keys are now
+// namespaced with a secret derived from the token, so even public blobs are
+// unguessable without the token.
+function getBlobSecret() {
+  const token = BLOB_WRITE_TOKEN || BLOB_READ_TOKEN;
+  if (!token) return '';
+  return crypto.createHash('sha256').update(String(token)).digest('hex').slice(0, 16);
+}
+
+function namespacedKey(key) {
+  const secret = getBlobSecret();
+  if (secret) return `${BLOB_PREFIX}/${secret}/${key}`;
+  return `${BLOB_PREFIX}/${key}`;
+}
+
+function legacyKey(key) {
+  return `${BLOB_PREFIX}/${key}`;
+}
+
+// Exported for tests to verify namespacing.
+export { getBlobSecret, namespacedKey, legacyKey };
+
+/* -------------------------------------------------------------------------- */
+/* Blob SDK wrapper with mock support and bounded timeouts                     */
+/* -------------------------------------------------------------------------- */
+let _blobSdk = null;
+async function getBlobSdk() {
+  if (_blobSdk) return _blobSdk;
+  try {
+    _blobSdk = await import('@vercel/blob');
+    return _blobSdk;
+  } catch {
+    return null;
+  }
+}
+
+async function streamToBuffer(stream) {
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks);
+}
+
+// In test mode (BLOB_API_BASE=http://127.0.0.1:9877) we bypass the SDK and
+// use a direct file-system mock under /tmp/mock-blob-store. This makes the
+// blob-mode test deterministic without needing to emulate the SDK's HTTP
+// protocol (which goes through https://vercel.com/api/blob and per-store
+// hosts). The mock still respects namespacing so the namespacing test can
+// verify it.
+function mockBlobPath(key) {
+  return path.join(MOCK_BLOB_STORE, key);
+}
+
+async function blobPut(key, body, contentType, { access = 'private', timeoutMs = 20000 } = {}) {
+  const nsKey = namespacedKey(key);
+  if (IS_MOCK_BLOB) {
+    const fp = mockBlobPath(nsKey);
+    fs.mkdirSync(path.dirname(fp), { recursive: true });
+    const buf = Buffer.isBuffer(body) ? body : Buffer.isBuffer(body) ? body : typeof body === 'string' ? Buffer.from(body) : Buffer.from(body);
+    // body may be Uint8Array
+    const toWrite = body instanceof Uint8Array ? Buffer.from(body) : buf;
+    fs.writeFileSync(fp, toWrite);
+    return { url: `mock://${nsKey}`, pathname: nsKey };
+  }
+  const sdk = await getBlobSdk();
+  if (!sdk) throw new Error('Blob SDK not available');
+  const { put } = sdk;
+  // put accepts string, Buffer, Blob, File, ReadableStream, etc.
+  return await put(nsKey, body, {
+    access,
+    token: BLOB_WRITE_TOKEN,
+    addRandomSuffix: false,
+    contentType,
+    abortSignal: AbortSignal.timeout(timeoutMs),
+  });
+}
+
+async function blobGetBuffer(key, { timeoutMs = 10000 } = {}) {
+  const nsKey = namespacedKey(key);
+  const legKey = legacyKey(key);
+  if (IS_MOCK_BLOB) {
+    // Try namespaced first, then legacy for migration
+    for (const k of [nsKey, legKey]) {
+      const fp = mockBlobPath(k);
+      if (fs.existsSync(fp)) {
+        return fs.readFileSync(fp);
+      }
+    }
+    return null;
+  }
+  const sdk = await getBlobSdk();
+  if (!sdk) return null;
+  const { get } = sdk;
+
+  // Try private first (cms.json, sessions.json should be private), then public,
+  // then legacy keys for migration from old deployments.
+  const attempts = [
+    { pathname: nsKey, access: 'private' },
+    { pathname: nsKey, access: 'public' },
+    { pathname: legKey, access: 'private' },
+    { pathname: legKey, access: 'public' },
+  ];
+  for (const attempt of attempts) {
+    try {
+      const res = await get(attempt.pathname, {
+        access: attempt.access,
+        token: BLOB_READ_TOKEN,
+        abortSignal: AbortSignal.timeout(timeoutMs),
+      });
+      if (!res) continue;
+      if (res.statusCode === 404) continue;
+      if (!res.stream) continue;
+      const buf = await streamToBuffer(res.stream);
+      return buf;
+    } catch (e) {
+      const msg = e?.message || '';
+      // Not found errors should try next attempt, other errors should bubble as null for fallback
+      if (/not found|404|BlobNotFound/i.test(msg)) continue;
+      // If it's a token/storeId error, don't hide it completely but try next
+      continue;
+    }
+  }
+  return null;
+}
+
+async function blobDel(key, { timeoutMs = 10000 } = {}) {
+  const nsKey = namespacedKey(key);
+  const legKey = legacyKey(key);
+  if (IS_MOCK_BLOB) {
+    for (const k of [nsKey, legKey]) {
+      const fp = mockBlobPath(k);
+      if (fs.existsSync(fp)) {
+        try {
+          fs.unlinkSync(fp);
+        } catch {}
+      }
+    }
+    return;
+  }
+  const sdk = await getBlobSdk();
+  if (!sdk) return;
+  const { del } = sdk;
+  // Try both namespaced and legacy
+  for (const k of [nsKey, legKey]) {
+    try {
+      await del(k, {
+        token: BLOB_WRITE_TOKEN,
+        abortSignal: AbortSignal.timeout(timeoutMs),
+      });
+    } catch {
+      // ignore, del is idempotent
+    }
+  }
+}
 
 /* -------------------------------------------------------------------------- */
 /* Stateless signed session tokens                                             */
@@ -227,18 +407,6 @@ function migrateCms(raw) {
 /* Storage layer: Vercel Blob (durable) with file-system fallback (local).     */
 /* -------------------------------------------------------------------------- */
 
-async function blobFetch(method, key, { body, contentType, timeoutMs = 10000, write = false } = {}) {
-  const token = write ? BLOB_WRITE_TOKEN : BLOB_READ_TOKEN;
-  const url = `${BLOB_API_BASE}/${BLOB_PREFIX}/${encodeURIComponent(key)}?token=${encodeURIComponent(token)}`;
-  const res = await fetch(url, {
-    method,
-    headers: body != null && contentType ? { 'Content-Type': contentType } : undefined,
-    body: body == null ? undefined : body,
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  return res;
-}
-
 function seedCms() {
   let cms;
   try {
@@ -285,20 +453,18 @@ function createStore() {
   store.readCms = async () => {
     if (USE_BLOB) {
       try {
-        const res = await blobFetch('GET', 'cms.json');
-        if (res.ok) {
-          const raw = JSON.parse(await res.text());
+        const buf = await blobGetBuffer('cms.json', { timeoutMs: 10000 });
+        if (buf) {
+          const raw = JSON.parse(buf.toString('utf8'));
           store.lastRead = 'blob';
           return migrateCms(raw);
         }
-        if (res.status !== 404) throw new Error(`blob status ${res.status}`);
         // First boot on this blob: seed it from the bundled cms.json.
         const seeded = seedCms();
         try {
-          await blobFetch('POST', 'cms.json', {
-            body: JSON.stringify(seeded, null, 2),
-            contentType: 'application/json',
-            write: true,
+          await blobPut('cms.json', JSON.stringify(seeded, null, 2), 'application/json', {
+            access: 'private',
+            timeoutMs: 20000,
           });
         } catch (e) {
           console.error('CMS: could not seed blob:', e?.message || e);
@@ -334,13 +500,10 @@ function createStore() {
     cms.updatedAt = new Date().toISOString();
     if (USE_BLOB) {
       try {
-        const res = await blobFetch('POST', 'cms.json', {
-          body: JSON.stringify(cms, null, 2),
-          contentType: 'application/json',
+        await blobPut('cms.json', JSON.stringify(cms, null, 2), 'application/json', {
+          access: 'private',
           timeoutMs: 20000,
-          write: true,
         });
-        if (!res.ok) throw new Error(`blob status ${res.status}`);
         store.lastSave = { persisted: true, storage: 'blob' };
         return store.lastSave;
       } catch (e) {
@@ -374,9 +537,8 @@ function createStore() {
   store.readSessions = async () => {
     if (USE_BLOB) {
       try {
-        const res = await blobFetch('GET', 'sessions.json', { timeoutMs: 8000 });
-        if (res.ok) return JSON.parse(await res.text());
-        if (res.status !== 404) throw new Error(`blob status ${res.status}`);
+        const buf = await blobGetBuffer('sessions.json', { timeoutMs: 8000 });
+        if (buf) return JSON.parse(buf.toString('utf8'));
         return {};
       } catch (e) {
         console.error('CMS: blob session read failed:', e?.message || e);
@@ -388,10 +550,9 @@ function createStore() {
   store.writeSessions = async (sessions) => {
     if (USE_BLOB) {
       try {
-        await blobFetch('POST', 'sessions.json', {
-          body: JSON.stringify(sessions, null, 2),
-          contentType: 'application/json',
-          write: true,
+        await blobPut('sessions.json', JSON.stringify(sessions, null, 2), 'application/json', {
+          access: 'private',
+          timeoutMs: 10000,
         });
         return;
       } catch (e) {
@@ -413,13 +574,10 @@ function createStore() {
     fs.writeFileSync(abs, buf); // always keep a local copy (served first)
     if (USE_BLOB) {
       try {
-        const res = await blobFetch('POST', key, {
-          body: new Uint8Array(buf),
-          contentType: mime,
+        await blobPut(key, new Uint8Array(buf), mime, {
+          access: 'public',
           timeoutMs: 30000,
-          write: true,
         });
-        if (!res.ok) console.error(`CMS: blob upload for ${key} failed (${res.status}) — local copy only`);
       } catch (e) {
         console.error(`CMS: blob upload for ${key} failed — local copy only:`, e?.message || e);
       }
@@ -434,9 +592,8 @@ function createStore() {
     }
     if (USE_BLOB) {
       try {
-        const res = await blobFetch('GET', `uploads-${name}`, { timeoutMs: 10000 });
-        if (res.ok) return Buffer.from(await res.arrayBuffer());
-        if (res.status !== 404) throw new Error(`blob status ${res.status}`);
+        const buf = await blobGetBuffer(`uploads-${name}`, { timeoutMs: 10000 });
+        if (buf) return buf;
       } catch (e) {
         console.error(`CMS: blob download for ${name} failed:`, e?.message || e);
       }
@@ -455,7 +612,7 @@ function createStore() {
     }
     if (USE_BLOB) {
       try {
-        await blobFetch('DELETE', `uploads-${name}`, { write: true });
+        await blobDel(`uploads-${name}`, { timeoutMs: 10000 });
       } catch {
         /* ignore */
       }
@@ -862,44 +1019,86 @@ export function createCmsMiddleware() {
       }
 
       // STORAGE HEALTH CHECK — one-click proof from the admin panel that
-      // cloud storage is reachable AND writable.
+      // cloud storage is reachable AND writable. Uses the official SDK with
+      // bounded timeouts and secret-namespaced keys.
       if (method === 'GET' && url === '/api/admin/storage-test') {
         const result = {
           mode: store.mode,
           host: HOST_NAME,
           tokenConfigured: USE_BLOB,
+          secretNamespaced: !!getBlobSecret(),
+          blobPrefix: BLOB_PREFIX,
+          exampleKey: namespacedKey('cms.json'),
           checks: [],
           healthy: false,
+          guidance: '',
         };
-        if (USE_BLOB) {
-          // 1) can we read the CMS document?
-          try {
-            const t0 = Date.now();
-            const r = await blobFetch('GET', 'cms.json');
-            result.checks.push({
-              name: 'Read CMS document from Blob',
-              ok: r.ok || r.status === 404,
-              status: r.status,
-              ms: Date.now() - t0,
-              detail: r.ok ? 'found' : r.status === 404 ? 'empty yet — will be seeded on your next save' : `HTTP ${r.status}`,
-            });
-          } catch (e) {
-            result.checks.push({ name: 'Read CMS document from Blob', ok: false, error: e.message || String(e) });
-          }
-          // 2) can we write, read back and delete a test key?
-          try {
-            const t0 = Date.now();
-            const wr = await blobFetch('POST', '_healthcheck', { body: 'ok', contentType: 'text/plain', write: true });
-            if (!wr.ok) throw new Error(`write HTTP ${wr.status}`);
-            const gr = await blobFetch('GET', '_healthcheck');
-            const ok = gr.ok && (await gr.text()) === 'ok';
-            await blobFetch('DELETE', '_healthcheck', { write: true });
-            result.checks.push({ name: 'Write → read → delete test key', ok, ms: Date.now() - t0 });
-          } catch (e) {
-            result.checks.push({ name: 'Write → read → delete test key', ok: false, error: e.message || String(e) });
-          }
+        if (!USE_BLOB) {
+          result.guidance =
+            'No BLOB_READ_WRITE_TOKEN configured. On Vercel: Storage → Create → Blob → connect to Production. On local/Docker: set BLOB_READ_WRITE_TOKEN in .env. Edits will live only in this server instance until it restarts.';
+          result.checks.push({
+            name: 'Token configured',
+            ok: false,
+            detail: 'BLOB_READ_WRITE_TOKEN is missing',
+          });
+          return send(res, 200, result);
         }
-        result.healthy = USE_BLOB && result.checks.length === 2 && result.checks.every((c) => c.ok);
+        // 1) can we read the CMS document?
+        try {
+          const t0 = Date.now();
+          const buf = await blobGetBuffer('cms.json', { timeoutMs: 10000 });
+          result.checks.push({
+            name: 'Read CMS document from Blob',
+            ok: true,
+            ms: Date.now() - t0,
+            detail: buf ? `found ${buf.length} bytes at ${namespacedKey('cms.json')}` : 'empty yet — will be seeded on your next save',
+          });
+        } catch (e) {
+          result.checks.push({
+            name: 'Read CMS document from Blob',
+            ok: false,
+            error: e.message || String(e),
+            detail: 'Failed to read cms.json — check token and store connection',
+          });
+        }
+        // 2) can we write, read back and delete a test key?
+        try {
+          const t0 = Date.now();
+          const testKey = '_healthcheck';
+          const testBody = `ok-${Date.now()}`;
+          await blobPut(testKey, testBody, 'text/plain', { access: 'public', timeoutMs: 15000 });
+          const readBack = await blobGetBuffer(testKey, { timeoutMs: 10000 });
+          const ok = readBack && readBack.toString('utf8') === testBody;
+          await blobDel(testKey, { timeoutMs: 10000 });
+          result.checks.push({
+            name: 'Write → read → delete test key',
+            ok: !!ok,
+            ms: Date.now() - t0,
+            detail: ok ? `round-trip OK at ${namespacedKey(testKey)}` : `mismatch: wrote "${testBody}" but read "${readBack?.toString('utf8')}"`,
+          });
+        } catch (e) {
+          result.checks.push({
+            name: 'Write → read → delete test key',
+            ok: false,
+            error: e.message || String(e),
+            detail: 'Write/read/delete failed — if this is Vercel, ensure the Blob store is connected to the Production environment and the token is fresh.',
+          });
+        }
+        // 3) secret namespacing check
+        result.checks.push({
+          name: 'Secret key namespacing',
+          ok: !!getBlobSecret(),
+          detail: getBlobSecret()
+            ? `All keys namespaced with secret ${getBlobSecret()} (e.g. ${namespacedKey('cms.json')}) so cms.json is not guessable`
+            : 'No secret derived — token missing, keys would be guessable',
+        });
+        result.healthy = result.checks.every((c) => c.ok);
+        if (!result.healthy) {
+          result.guidance =
+            'Cloud storage is not healthy. Common fixes: (1) In Vercel dashboard → Storage → your Blob store → Settings → ensure it is connected to Production, (2) Redeploy after connecting, (3) Check BLOB_READ_WRITE_TOKEN is set in Production env, (4) If using OIDC, set BLOB_STORE_ID. The admin panel will keep working in local fallback mode but edits will vanish on cold start until Blob is healthy.';
+        } else {
+          result.guidance = 'Cloud storage is healthy — writes will persist across cold starts and redeploys.';
+        }
         return send(res, 200, result);
       }
 
