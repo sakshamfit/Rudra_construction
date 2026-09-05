@@ -87,7 +87,12 @@ edit in **/admin → Turnover & Metrics**.
 
 - Vercel KV was retired by Vercel (Dec 2024); this project uses **Vercel Blob**
   instead, via its plain REST API (no SDK dependency).
-- On Vercel, photo uploads through the API are capped at 4 MB (platform
-  body limit for serverless functions). On the Node server the cap is 12 MB.
+- Photo uploads travel as base64 inside JSON. Vercel caps every function
+  request body at ~4.5 MB, so the admin console **auto-optimizes large photos
+  in the browser** before sending: it detects which host serves the API
+  (`/api/admin/cms → host`) and re-encodes (canvas → JPEG/WebP) anything that
+  would exceed that host's byte budget — Vercel ≈ 2.5 MB decoded, Node
+  ≈ 11 MB decoded. Small files and GIFs pass through untouched. The Node
+  server accepts files up to 12 MB.
 - Uploads are served from `/uploads/...`: locally from `public/uploads/`,
   on Vercel from the blob (with a local `/tmp` cache).

@@ -29,7 +29,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import type { CmsBlog, CmsPayload, CmsPhoto, CmsProject, CompanySettings, EstimatorSettings } from '../cms/types';
-import { fileToDataUrl } from '../cms/fileToDataUrl';
+import { prepareImageUpload, setUploadHost } from '../cms/fileToDataUrl';
 import { mergeLocalOverlay, toLocalPayload, writeLocalState } from '../cms/localState';
 import { PROJECTS as DEFAULT_PROJECTS } from '../data/companyData';
 import heroImg from '../assets/images/rudra_hero_construction_1788465374495.jpg';
@@ -60,7 +60,13 @@ async function api<T = unknown>(url: string, init?: RequestInit): Promise<T> {
     json = {};
   }
   if (!res.ok) {
-    const err = new Error((json as { error?: string }).error || `Request failed (${res.status})`) as Error & {
+    // Vercel returns a bare 413 when the request body exceeds the
+    // serverless ~4.5 MB cap — translate that into actionable guidance.
+    const message =
+      res.status === 413
+        ? 'This image is too large for the server to accept. The admin console auto-optimizes large photos before upload, so please try the photo again — or pick a smaller file.'
+        : (json as { error?: string }).error || `Request failed (${res.status})`;
+    const err = new Error(message) as Error & {
       status?: number;
     };
     err.status = res.status;
@@ -110,6 +116,9 @@ export function AdminApp() {
   const load = useCallback(async () => {
     try {
       const data = await api<CmsPayload>('/api/admin/cms');
+      // Tell the upload pipeline which host serves the API so it can size
+      // photos to fit that host's request-body cap (Vercel's is ~4.5 MB).
+      setUploadHost(data.host);
       // Merge with the browser mirror: on stateless hosts (Vercel serverless
       // without a Blob) a cold-started API would serve seed data and your
       // edits would look like they vanished after a refresh. Newer wins.
@@ -403,7 +412,7 @@ function PlacementsPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => P
     setMessage('');
     setError('');
     try {
-      const { data, mime, name } = await fileToDataUrl(file);
+      const { data, mime, name } = await prepareImageUpload(file);
       const cleanTitle = name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ') || `${slotKey} replacement photo`;
 
       // 1. Upload photo to library
@@ -624,15 +633,17 @@ function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promi
     setUploading(true);
     try {
       const list = Array.from(files);
+      let optimized = false;
       for (const file of list) {
-        const { data, mime, name } = await fileToDataUrl(file);
+        const prepared = await prepareImageUpload(file);
+        optimized = optimized || prepared.optimized;
         await api('/api/admin/photos', {
           method: 'POST',
           body: JSON.stringify({
-            data,
-            mime,
-            title: name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
-            alt: name,
+            data: prepared.data,
+            mime: prepared.mime,
+            title: prepared.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+            alt: prepared.name,
             section: 'gallery',
             showInGallery: true,
             visible: true,
@@ -640,7 +651,8 @@ function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promi
         });
       }
       await onChange();
-      setMessage(list.length === 1 ? 'Photo added to library and website.' : `${list.length} photos added.`);
+      const suffix = optimized ? ' Auto-optimized for web.' : '';
+      setMessage(list.length === 1 ? `Photo added to library and website.${suffix}` : `${list.length} photos added.${suffix}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
@@ -653,7 +665,7 @@ function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promi
     setError('');
     setMessage('');
     try {
-      const { data, mime } = await fileToDataUrl(file);
+      const { data, mime } = await prepareImageUpload(file);
       await api(`/api/admin/photos/${photoId}/replace`, {
         method: 'POST',
         body: JSON.stringify({ data, mime }),
@@ -707,7 +719,8 @@ function PhotosPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Promi
           Upload Photos from Desktop
         </div>
         <div className="text-xs text-[#78716c] mt-1">
-          Drag & drop images here or click to choose from computer · JPEG, PNG, WebP or GIF · up to 12 MB each
+          Drag & drop images here or click to choose from computer · JPEG, PNG, WebP or GIF · up to 25 MB each
+          · large photos are auto-optimized before upload
         </div>
         <input
           type="file"
@@ -876,7 +889,7 @@ function PhotoModal({
     setBusy(true);
     setError('');
     try {
-      const { data, mime } = await fileToDataUrl(file);
+      const { data, mime } = await prepareImageUpload(file);
       await api(`/api/admin/photos/${photo.id}/replace`, {
         method: 'POST',
         body: JSON.stringify({ data, mime }),
@@ -1037,7 +1050,7 @@ function ProjectsPanel({ cms, onChange }: { cms: CmsPayload; onChange: () => Pro
     setBusyId(project.id);
     setMsg('');
     try {
-      const { data, mime, name } = await fileToDataUrl(file);
+      const { data, mime, name } = await prepareImageUpload(file);
       const cleanTitle = `${project.title} Site Photo`;
 
       // 1. Upload to CMS photos
@@ -1257,7 +1270,7 @@ function ProjectEditor({
     setUploadingImage(true);
     setErr('');
     try {
-      const { data, mime, name } = await fileToDataUrl(file);
+      const { data, mime, name } = await prepareImageUpload(file);
       const cleanTitle = draft.title ? `${draft.title} Image` : name;
       const res = await api<{ photo: CmsPhoto }>('/api/admin/photos', {
         method: 'POST',
@@ -1681,7 +1694,7 @@ function BlogEditor({
     setUploadingCover(true);
     setError('');
     try {
-      const { data, mime, name } = await fileToDataUrl(file);
+      const { data, mime, name } = await prepareImageUpload(file);
       const cleanTitle = draft.title ? `${draft.title} Cover` : name;
       const res = await api<{ photo: CmsPhoto }>('/api/admin/photos', {
         method: 'POST',
