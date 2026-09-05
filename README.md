@@ -87,12 +87,13 @@ edit in **/admin → Turnover & Metrics**.
 
 - Vercel KV was retired by Vercel (Dec 2024); this project uses **Vercel Blob**
   instead, via its plain REST API (no SDK dependency).
-- Photo uploads travel as base64 inside JSON. Vercel caps every function
-  request body at ~4.5 MB, so the admin console **auto-optimizes large photos
-  in the browser** before sending: it detects which host serves the API
-  (`/api/admin/cms → host`) and re-encodes (canvas → JPEG/WebP) anything that
-  would exceed that host's byte budget — Vercel ≈ 2.5 MB decoded, Node
-  ≈ 11 MB decoded. Small files and GIFs pass through untouched. The Node
-  server accepts files up to 12 MB.
+- Photos are stored **highly compressed**: the Photo Library shows a
+  full-quality preview first; when you approve a photo it is re-encoded in
+  the browser (canvas → JPEG/WebP, max 2048 px, quality-tuned toward
+  ~400 KB) and the **smaller of original vs re-encode** is what gets stored —
+  usually a few hundred KB. Other upload spots (hero/project/blog photos)
+  use the same compression automatically. Photos travel as base64 inside
+  JSON, so the pipeline also keeps payloads under the host's request-body
+  cap (Vercel ≈ 4.5 MB hard limit, Node accepts files up to 12 MB).
 - Uploads are served from `/uploads/...`: locally from `public/uploads/`,
   on Vercel from the blob (with a local `/tmp` cache).

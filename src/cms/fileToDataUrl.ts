@@ -1,33 +1,39 @@
 /**
- * Admin photo upload pipeline.
+ * Admin photo upload pipeline — "preview at full quality, store tiny".
  *
- * Photos are sent to the CMS API as base64 data URLs inside a JSON body.
- * That inflates the file by ~33%, and Vercel serverless functions hard-cap
- * the ENTIRE request body at 4.5 MB — so a camera photo of ~4 MB becomes a
- * ~5.4 MB payload and Vercel rejects it with a 413 before our API code even
- * runs. That is why uploads from the admin panel were failing on the live
- * site.
+ * Photos are sent to the CMS API as base64 data URLs inside a JSON body, so
+ * two goals have to be met at once:
  *
- * Fix: before encoding, large photos are re-encoded in the browser
- * (canvas → JPEG/WebP) and downscaled/quality-tuned until the decoded image
- * fits the byte budget of the current deployment:
+ *  1. STORAGE MINIMIZATION — when the admin approves a photo it is
+ *     re-encoded in the browser (canvas → JPEG/WebP, downscaled to web
+ *     dimensions, quality-tuned) toward a tiny storage target
+ *     (STORAGE_TARGET_BYTES ≈ 400 KB). Whichever ends up smaller — the
+ *     original file or the re-encoded version — is the one that gets stored,
+ *     so the library always holds the minimum-size copy.
+ *  2. DEPLOYMENT BUDGET — Vercel serverless functions hard-cap request
+ *     bodies at ~4.5 MB, so the final payload must also stay under the
+ *     current host's byte budget (the storage target is far below it).
  *
- *   - Vercel (serverless): 2.5 MB decoded → ~3.4 MB JSON body < 4.5 MB cap
- *   - Node / Docker / VPS: 11 MB decoded → ~14.7 MB body < server cap
- *
- * Small files pass through untouched, so quality is never touched unless the
- * deployment actually requires it. GIFs are never re-encoded (canvas would
- * drop animation) — an oversized GIF is rejected with a clear message.
+ * Files already ≤ SKIP_COMPRESS_BYTES pass through untouched (they are small
+ * enough), and GIFs are never re-encoded (canvas would drop their animation).
  */
 
 const MB = 1024 * 1024;
+const KB = 1024;
 
 /** Hard cap on the RAW picked file; anything bigger is almost certainly a mistake. */
 export const RAW_FILE_LIMIT = 25 * MB;
-/** Longest-edge cap for the first compression pass. */
-const MAX_LONG_EDGE = 3200;
-/** Never shrink below this longest edge while looping. */
-const MIN_LONG_EDGE = 1200;
+
+/** Approved photos are compressed toward this stored size (~400 KB). */
+export const STORAGE_TARGET_BYTES = 400 * KB;
+
+/** Files this small are already "minimum" and are stored as-is. */
+const SKIP_COMPRESS_BYTES = 100 * KB;
+
+/** Web dimensions: crisp on any screen, tiny in bytes. */
+const STORE_MAX_LONG_EDGE = 2048;
+/** Never shrink below this longest edge while compressing. */
+const STORE_MIN_LONG_EDGE = 900;
 
 export type UploadHost = 'vercel' | 'node';
 
@@ -54,7 +60,7 @@ export function uploadByteBudget(): number {
 
 export function formatBytes(bytes: number): string {
   if (bytes >= MB) return `${(bytes / MB).toFixed(1)} MB`;
-  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${Math.max(1, Math.round(bytes / KB))} KB`;
 }
 
 export interface PreparedImage {
@@ -63,6 +69,8 @@ export interface PreparedImage {
   name: string;
   /** True when the image was re-encoded/downscaled before upload. */
   optimized: boolean;
+  /** Decoded size in bytes of what will actually be stored. */
+  bytes: number;
 }
 
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -82,6 +90,11 @@ function dataUrlBytes(dataUrl: string): number {
   if (idx === -1) return dataUrl.length;
   const b64 = dataUrl.length - (idx + 'base64,'.length);
   return Math.floor(b64 * 0.75);
+}
+
+function mimeOfDataUrl(dataUrl: string, fallback: string): string {
+  const m = dataUrl.match(/^data:([^;,]+);base64,/);
+  return m?.[1] || fallback;
 }
 
 function loadImage(file: File): Promise<HTMLImageElement> {
@@ -121,12 +134,24 @@ function drawToDataUrl(
   return canvas.toDataURL(outMime, quality);
 }
 
+export interface PrepareOptions {
+  /**
+   * Override the storage target (bytes). Defaults to STORAGE_TARGET_BYTES.
+   * The deployment's hard budget always wins if it is smaller.
+   */
+  maxBytes?: number;
+}
+
 /**
- * Read + (if needed) compress an image file so it fits the current
- * deployment's upload budget. Always resolves to something the CMS API will
- * accept — or throws with a human-readable explanation.
+ * Read an image and compress it to the smallest practical size for storage.
+ *
+ * The admin panel previews the original photo for approval; when the user
+ * approves, this produces the minimum-size stored copy: downscaled to web
+ * dimensions, quality-tuned toward `maxBytes` (≈400 KB by default), and —
+ * if the ORIGINAL happens to already be smaller than any re-encode — the
+ * original is kept instead, so the result is never larger than necessary.
  */
-export async function prepareImageUpload(file: File): Promise<PreparedImage> {
+export async function prepareImageUpload(file: File, opts?: PrepareOptions): Promise<PreparedImage> {
   if (!file || !file.type) {
     throw new Error(
       'That file type can’t be uploaded. Please choose a JPEG, PNG, WebP or GIF image — iPhone HEIC photos must be converted to JPEG first.'
@@ -140,55 +165,74 @@ export async function prepareImageUpload(file: File): Promise<PreparedImage> {
   }
 
   const budget = uploadByteBudget();
+  const target = Math.min(budget, opts?.maxBytes ?? STORAGE_TARGET_BYTES);
 
-  // Small enough as-is: keep the original bytes (quality + GIF animation).
-  if (file.size <= budget) {
-    const raw = await fileToDataUrl(file);
-    return { ...raw, optimized: false };
-  }
-
+  // GIFs: never re-encode (animation). Pass through when within budget.
   if (file.type === 'image/gif') {
+    if (file.size <= budget) {
+      const raw = await fileToDataUrl(file);
+      return { ...raw, optimized: false, bytes: file.size };
+    }
     throw new Error(
       `This GIF is ${formatBytes(file.size)}, but this deployment accepts images up to ${formatBytes(budget)}. ` +
-        'GIFs cannot be auto-optimized without losing their animation — please export a smaller copy and try again.'
+        'GIFs cannot be compressed without losing their animation — please export a smaller copy and try again.'
     );
+  }
+
+  // Already tiny — nothing to gain from re-encoding.
+  if (file.size <= Math.min(target, SKIP_COMPRESS_BYTES)) {
+    const raw = await fileToDataUrl(file);
+    return { ...raw, optimized: false, bytes: file.size };
   }
 
   const img = await loadImage(file);
   try {
-    // Prefer JPEG for photos; WebP (with alpha support) for PNG/WebP sources.
+    // Prefer JPEG for photos; WebP (alpha-capable) for PNG/WebP sources.
     const outMime = file.type === 'image/jpeg' ? 'image/jpeg' : 'image/webp';
 
     const longest = Math.max(img.naturalWidth, img.naturalHeight);
-    let scale = longest > MAX_LONG_EDGE ? MAX_LONG_EDGE / longest : 1;
+    let scale = longest > STORE_MAX_LONG_EDGE ? STORE_MAX_LONG_EDGE / longest : 1;
 
-    let best = drawToDataUrl(img, scale, outMime, 0.88);
-    let quality = 0.88;
+    // Quality ladder, then dimension ladder, until we hit the target.
+    let best = drawToDataUrl(img, scale, outMime, 0.82);
+    let bestBytes = dataUrlBytes(best);
+    let quality = 0.82;
     let guard = 0;
-    while (dataUrlBytes(best) > budget && guard++ < 20) {
+    while (bestBytes > target && guard++ < 24) {
       if (quality > 0.52) {
-        quality = Math.max(0.5, quality - 0.12);
+        quality = Math.max(0.5, +(quality - 0.08).toFixed(2));
       } else {
-        const nextLongest = Math.max(img.naturalWidth, img.naturalHeight) * scale * 0.82;
-        if (nextLongest < MIN_LONG_EDGE) break; // can't shrink further without wrecking the photo
-        scale *= 0.82;
-        quality = 0.82; // give the smaller canvas a quality reset
+        const nextLongest = longest * scale * 0.85;
+        if (nextLongest < STORE_MIN_LONG_EDGE) break; // smaller would wreck the photo
+        scale *= 0.85;
+        quality = 0.72; // reset quality for the smaller canvas
       }
-      best = drawToDataUrl(img, scale, outMime, quality);
+      const candidate = drawToDataUrl(img, scale, outMime, quality);
+      const candidateBytes = dataUrlBytes(candidate);
+      if (candidateBytes < bestBytes) {
+        best = candidate;
+        bestBytes = candidateBytes;
+      }
     }
 
-    if (dataUrlBytes(best) > budget) {
+    // Deployment budget is a hard wall even if the storage target wasn't met.
+    if (bestBytes > budget) {
       throw new Error(
-        `Even after optimization this image is larger than the ${formatBytes(budget)} upload limit of this deployment. ` +
+        `Even after compression this image is larger than the ${formatBytes(budget)} upload limit of this deployment. ` +
           'Please choose a smaller photo.'
       );
     }
 
+    // Minimum-size rule: if the ORIGINAL file is still smaller than our best
+    // re-encode (can happen with tiny/already-optimized images), store it.
+    if (file.size <= bestBytes && file.size <= budget) {
+      const raw = await fileToDataUrl(file);
+      return { ...raw, optimized: false, bytes: file.size };
+    }
+
     // The browser may ignore our requested format (e.g. no WebP encoder) —
     // trust what it actually produced.
-    const mimeMatch = best.match(/^data:([^;,]+);base64,/);
-    const mime = mimeMatch?.[1] || outMime;
-    return { data: best, mime, name: file.name, optimized: true };
+    return { data: best, mime: mimeOfDataUrl(best, outMime), name: file.name, optimized: true, bytes: bestBytes };
   } finally {
     URL.revokeObjectURL(img.src);
   }
