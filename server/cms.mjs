@@ -154,13 +154,31 @@ async function blobPut(key, body, contentType, { access = 'private', timeoutMs =
   if (!sdk) throw new Error('Blob SDK not available');
   const { put } = sdk;
   // put accepts string, Buffer, Blob, File, ReadableStream, etc.
-  return await put(nsKey, body, {
-    access,
-    token: BLOB_WRITE_TOKEN,
-    addRandomSuffix: false,
-    contentType,
-    abortSignal: AbortSignal.timeout(timeoutMs),
-  });
+  // Private stores reject public access. Always prefer private, and auto-fallback
+  // if the caller requested public on a private store.
+  try {
+    return await put(nsKey, body, {
+      access,
+      token: BLOB_WRITE_TOKEN,
+      addRandomSuffix: false,
+      contentType,
+      abortSignal: AbortSignal.timeout(timeoutMs),
+    });
+  } catch (e) {
+    const msg = e?.message || String(e);
+    if (access === 'public' && /private store|public access/i.test(msg)) {
+      // Retry as private — this is correct for private Blob stores, and still
+      // works when served via our /uploads/* API route.
+      return await put(nsKey, body, {
+        access: 'private',
+        token: BLOB_WRITE_TOKEN,
+        addRandomSuffix: false,
+        contentType,
+        abortSignal: AbortSignal.timeout(timeoutMs),
+      });
+    }
+    throw e;
+  }
 }
 
 async function blobGetBuffer(key, { timeoutMs = 10000 } = {}) {
@@ -563,6 +581,9 @@ function createStore() {
   };
 
   // Uploads: flat keys "uploads-<filename>" in the blob; files in UPLOAD_DIR.
+  // IMPORTANT: private stores reject public access. We store uploads as private
+  // and serve them through our own /uploads/* API route (store.getUpload), which
+  // reads via the SDK with private access. That works for both private and public stores.
   store.putUpload = async (id, mime, buf) => {
     if (!ALLOWED_MIME.has(mime)) throw new Error('Only JPEG, PNG, WebP and GIF images are allowed.');
     if (buf.length > MAX_BYTES) throw new Error(`Image must be ${MAX_BYTES_LABEL} or smaller.`);
@@ -575,7 +596,7 @@ function createStore() {
     if (USE_BLOB) {
       try {
         await blobPut(key, new Uint8Array(buf), mime, {
-          access: 'public',
+          access: 'private',
           timeoutMs: 30000,
         });
       } catch (e) {
@@ -1066,7 +1087,7 @@ export function createCmsMiddleware() {
           const t0 = Date.now();
           const testKey = '_healthcheck';
           const testBody = `ok-${Date.now()}`;
-          await blobPut(testKey, testBody, 'text/plain', { access: 'public', timeoutMs: 15000 });
+          await blobPut(testKey, testBody, 'text/plain', { access: 'private', timeoutMs: 15000 });
           const readBack = await blobGetBuffer(testKey, { timeoutMs: 10000 });
           const ok = readBack && readBack.toString('utf8') === testBody;
           await blobDel(testKey, { timeoutMs: 10000 });
